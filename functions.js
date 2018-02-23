@@ -1,6 +1,6 @@
 // -----------------------------------------------------------------------------
 // balarabe@protonmail.com                                          License: MIT
-// :v: 2018-02-22 10:49:56 315ED6                           [zr/js/functions.js]
+// :v: 2018-02-24 00:00:44 C8BA86                           [zr/js/functions.js]
 // -----------------------------------------------------------------------------
 
 // # Caret Functions
@@ -172,7 +172,8 @@ function caretPos(input) {
     }
     if (input.setSelectionRange) {
         return input.selectionEnd;
-    } else if (input.createTextRange) {
+    }
+    if (input.createTextRange) {
         var range = /**@type{!zr.ITextRange}*/
                     (   /**@type{!zr.ITextRange}*/
                         (document.selection.createRange()).duplicate()  );
@@ -568,9 +569,9 @@ function elID(el) {
  */
 function getElementsByTagName(container, tagName) {
     var list = /**@type{NodeList<HTMLElement>}*/
-               (container.getElementsByTagName(tagName)),
-        ret  = [];
-    for (var i = 0, count = list.length; i < count; i++) {
+               (container.getElementsByTagName(tagName));
+    var ret  = [];
+    for (var i = 0, end = list.length; i < end; i++) {
         ret.push(list[i]);
     }
     return ret;
@@ -583,10 +584,10 @@ function getElementsByTagName(container, tagName) {
  *  @return {!string}
  */
 function getInnerText(el) {
-    // Chrome (2016)   innerText
-    // Edge (Win10)    innerText
-    // IE11            innerText
-    // Safari          innerText
+    // Chrome (2016)   has innerText
+    // Edge (Win10)    has innerText
+    // IE11            has innerText
+    // Safari          has innerText
     // Firefox (2016)  no innerText
     // Firefox 1       no innerText
     if (el === null) {
@@ -716,7 +717,7 @@ function makeCSSLink(path, doc) {
     } else {
         ret = /**@type{!HTMLLinkElement}*/ (document.createElement($link));
     }
-    ret.rel = $stylesheet;
+    ret.rel  = $stylesheet;
     ret.type = $text_css;
     ret.href = path;
     return ret;
@@ -1053,20 +1054,19 @@ function absoluteX(el) {
     }
     if (el.getBoundingClientRect) {  // not supported in Firefox 1
         return el.getBoundingClientRect().left;
-    } else {
-        var offsetPrev = N(el[$offsetLeft]);
-        var x = 0;
-        do {
-            var offset = N(el[$offsetLeft]);
-            if (offset != 0 && offset != offsetPrev) {
-                offset = N(el[$offsetLeft]);
-                x += offset;
-                offsetPrev = offset;
-            }
-            el = /**@type{!HTMLElement}*/ (el.parentNode);
-        } while (el.tagName.toLowerCase() != $html);
-        return x;
     }
+    var offsetPrev = N(el[$offsetLeft]);
+    var x = 0;
+    do {
+        var offset = N(el[$offsetLeft]);
+        if (offset != 0 && offset != offsetPrev) {
+            offset = N(el[$offsetLeft]);
+            x += offset;
+            offsetPrev = offset;
+        }
+        el = /**@type{!HTMLElement}*/ (el.parentNode);
+    } while (el.tagName.toLowerCase() != $html);
+    return x;
 }                                                                    //absoluteX
 
 /** absoluteY: Returns the absolute top (y-axis) position of an element,
@@ -1082,20 +1082,19 @@ function absoluteY(el) {
     }
     if (el.getBoundingClientRect) {  // not supported in Firefox 1
         return el.getBoundingClientRect().top;
-    } else {
-        var offsetPrev = N(el[$offsetTop]);
-        var y          = 0;
-        do {
-            var offset = N(el[$offsetTop]);
-            if (offset != 0 && offset != offsetPrev) {
-                offset = N(el[$offsetTop]);
-                y += offset;
-                offsetPrev = offset;
-            }
-            el = /**@type{!HTMLElement}*/ (el.parentNode);
-        } while (el.tagName.toLowerCase() != $html);
-        return y;
     }
+    var offsetPrev = N(el[$offsetTop]);
+    var y          = 0;
+    do {
+        var offset = N(el[$offsetTop]);
+        if (offset != 0 && offset != offsetPrev) {
+            offset = N(el[$offsetTop]);
+            y += offset;
+            offsetPrev = offset;
+        }
+        el = /**@type{!HTMLElement}*/ (el.parentNode);
+    } while (el.tagName.toLowerCase() != $html);
+    return y;
 }                                                                    //absoluteY
 
 /** centerInWindow: Centers the specified element (usually a 'div')
@@ -1160,8 +1159,8 @@ function offsetWidth(el) {
 function windowHeight() {
     if (window.innerHeight) {
         return N(window.innerHeight);
-        //
-    } else if (document.documentElement[$clientHeight]) {
+    }
+    if (document.documentElement[$clientHeight]) {
         return N(document.documentElement[$clientHeight]);
     }
     return -1;
@@ -1174,7 +1173,8 @@ function windowHeight() {
 function windowWidth() {
     if (window.innerWidth) {
         return window.innerWidth;
-    } else if (document.documentElement[$clientWidth]) {
+    }
+    if (document.documentElement[$clientWidth]) {
         return document.documentElement[$clientWidth];
     }
     return -1;
@@ -1193,9 +1193,8 @@ function x(el) {
     }
     if (el.getBoundingClientRect) {  // not supported in Firefox 1
         return el.getBoundingClientRect().left;
-    } else {
-        return el[$offsetLeft];
     }
+    return el[$offsetLeft];
 }                                                                            //x
 
 /** y: Returns the top (y-axis) position of an element 'el'.
@@ -1211,9 +1210,8 @@ function y(el) {
     }
     if (el.getBoundingClientRect) {  // not supported in Firefox 1
         return el.getBoundingClientRect().top;
-    } else {
-        return el[$offsetTop];
     }
+    return el[$offsetTop];
 }                                                                            //y
 
 /** zIndexMax: Returns the maximum z-index of
@@ -1269,9 +1267,11 @@ function eventSrc(ob) {
     if (typeof ob == $object) {
         if (ob[$currentTarget]) {
             return /**@type{HTMLElement}*/ (ob[$currentTarget]);
-        } else if (ob[$srcElement]) {
+        }
+        if (ob[$srcElement]) {
             return /**@type{HTMLElement}*/ (ob[$srcElement]);
-        } else if (ob[$nodeName]) {
+        }
+        if (ob[$nodeName]) {
             return /**@type{HTMLElement}*/ (ob);
         }
         err(0xE3FC92);  // eventSrc(): failed getting event source
@@ -1802,9 +1802,8 @@ function reduce(ar, applyFn, initialVal) {
     if ($reduce in ar) {
         if (hasInitialVal) {
             return ar.reduce(applyFn, initialVal);
-        } else {
-            return ar.reduce(applyFn);
         }
+        return ar.reduce(applyFn);
     }
     var i    = hasInitialVal ? 0          : 1;
     var prev = hasInitialVal ? initialVal : ar[0];
@@ -1848,9 +1847,8 @@ function until(ar, predicateFn) {
     for (var i = 0; i < count; i++) {
         if (predicateFn(ar[i], i, ar)) {
             break;
-        } else {
-            ret.push(ar[i]);
         }
+        ret.push(ar[i]);
     }
     return ret;
 }                                                                        //until
@@ -1910,15 +1908,20 @@ function browserType() {
     var agent = navigator.userAgent.toLowerCase();
     if (/seamonkey/.test(agent)) {
         return $seamonkey;
-    } else if (/firefox/.test(agent)) {
+    }
+    if (/firefox/.test(agent)) {
         return $firefox;
-    } else if (/chrome/.test(agent)) {
+    }
+    if (/chrome/.test(agent)) {
         return $chrome;
-    } else if (/safari/.test(agent)) {
+    }
+    if (/safari/.test(agent)) {
         return $safari;
-    } else if (/msie/.test(agent)) {
+    }
+    if (/msie/.test(agent)) {
         return $msie;
-    } else if (/opera/.test(agent)) {
+    }
+    if (/opera/.test(agent)) {
         return $opera;
     }
     return $other;
