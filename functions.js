@@ -1618,11 +1618,7 @@ function isFound(ar, predicateFn) {
         }
         return false;
     }
-    var count = ar.length;
-    if (count < 1) {
-        return false;
-    }
-    for (var i = 0; i < count; i++) {
+    for (var i = 0, end = ar.length; i < end; i++) {
         if (predicateFn(ar[i], i, ar)) {
             return true;
         }
