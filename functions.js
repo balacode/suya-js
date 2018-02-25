@@ -1,6 +1,6 @@
 // -----------------------------------------------------------------------------
-// balarabe@protonmail.com                                          License: MIT
-// :v: 2018-02-24 00:00:44 C8BA86                           [zr/js/functions.js]
+// (c) balarabe@protonmail.com                                      License: MIT
+// :v: 2018-02-25 15:10:49 D80551                           [zr/js/functions.js]
 // -----------------------------------------------------------------------------
 
 // # Caret Functions
@@ -148,7 +148,7 @@
 // -----------------------------------------------------------------------------
 
 /*
-    Note: This file should not be included in JS scripts directly.
+    Note: This file should not be included in HTML pages directly.
     It is part of an assembly of files making up the Zirconium framework.
     If you want to use just this file, enclose it in a mudule:
     Place it between the contents of module_begin.js and module_end.js.
@@ -177,7 +177,7 @@ function caretPos(input) {
         var range = /**@type{!zr.ITextRange}*/
                     (   /**@type{!zr.ITextRange}*/
                         (document.selection.createRange()).duplicate()  );
-        range.moveStart($textedit, -1);
+        range.moveStart("textedit", -1);
         return range.text.length;
     }
     return 0;
@@ -197,7 +197,7 @@ function caretSet(input, pos) {
     } else if (input.createTextRange) {
         var range = /**@type{!zr.ITextRange}*/ (input.createTextRange());
         if (input && range) {
-            range.move($character, pos);
+            range.move("character", pos);
             range.select();
         }
     }
@@ -218,7 +218,7 @@ function caretToEnd(input) {
     } else if (input.createTextRange) {
         var range = /**@type{!zr.ITextRange}*/ (input.createTextRange());
         if (input && range) {
-            range.move($character, pos);
+            range.move("character", pos);
             range.select();
         }
     }
@@ -230,15 +230,15 @@ function caretToEnd(input) {
  */
 function disableSelect(el) {
     if (undef(typeof el) || el === null) {
-        err(0xEA1EC5);  // disableSelect(): 'el' is null
+        err(0xEA1EC5);                          // disableSelect(): 'el' is null
         return;
     }
-    el.onselectstart = function() { //anonymous
+    el.onselectstart = function() {
         return false;
     };
-    el.unselectable = $on;
-    el[$style][$MozUserSelect] = $none;
-    el[$style][$cursor] = $default;
+    el.unselectable = "on";
+    el.style.MozUserSelect = "none";
+    el.style.cursor = "default";
 }                                                                //disableSelect
 
 // -----------------------------------------------------------------------------
@@ -256,15 +256,15 @@ function disableSelect(el) {
  */
 function formatDate(format, args) {
     if (!isString(format)) {
-        err(0xE67C67);  // formatDate(): arg 'format' is not a string
-        return $BLANK;
+        err(0xE67C67);             // formatDate(): arg 'format' is not a string
+        return "";
     }
     var isD = isDate(args);
     var isN = isArray(args) && args.length == 3;
     if (!isD && !isN) {
-        err(0xEA76F5,  // formatDate(): 'args' not a date or number
+        err(0xEA76F5,               // formatDate(): 'args' not a date or number
             typeof args);
-        return $BLANK;
+        return "";
     }
     var yr  = isD ? args.getFullYear()  : N(args[0]);
     var mn  = isD ? args.getMonth() + 1 : N(args[1]);
@@ -273,28 +273,28 @@ function formatDate(format, args) {
     mn = isNumber(mn) && mn >= 1    && mn <= 12   ? mn : NaN;
     dy = isNumber(dy) && dy >= 1    && dy <= 31   ? dy : NaN;
     var formats = [
-            [$yyyy, function() {
+            ["yyyy", function() {
                         return S(yr);
                     }],
-            [$yy,   function() {
+            ["yy",   function() {
                         return suffix(S(yr), 2);
                     }],
-            [$mmmm, function() {
+            ["mmmm", function() {
                         return monthNameEN(mn);
                     }],
-            [$mmm,  function() {
+            ["mmm",  function() {
                         return monthNameEN(mn).substr(0, 3);
                     }],
-            [$mm,   function() {
-                        return mn < 10 ? $0 + S(mn) : S(mn);
+            ["mm",   function() {
+                        return mn < 10 ? "0" + S(mn) : S(mn);
                     }],
-            [$m,    function() {
+            ["m",    function() {
                         return S(mn);
                     }],
-            [$dd,   function() {
-                        return dy < 10 ? $0 + S(dy) : S(dy);
+            ["dd",   function() {
+                        return dy < 10 ? "0" + S(dy) : S(dy);
                     }],
-            [$d,    function() {
+            ["d",    function() {
                         return S(dy);
                     }]];
     var ret = format;
@@ -303,11 +303,11 @@ function formatDate(format, args) {
             function formatItem(ar) {
                 var fmt = S(ar[0]);
                 var fn  = /**@type{!function():string}*/ (ar[1]);
-                var val = $BLANK;
+                var val = "";
                 if (contains(ret, fmt)) {
                     var repl = trim(S(fn()));
                     if (repl.length == 0) {
-                        repl = repeat($QM, fmt.length);
+                        repl = repeat("?", fmt.length);
                     }
                     ret = replace(ret, fmt, repl);
                 }
@@ -322,10 +322,10 @@ function formatDate(format, args) {
  *  @return {boolean}
  */
 function isDate(val) {
-    return isObject(val)           &&
-           isFn(val[$getFullYear]) &&
-           isFn(val[$getMonth])    &&
-           isFn(val[$getDate]);
+    return isObject(val) &&
+           isFn(val["getFullYear"]) &&
+           isFn(val["getMonth"]) &&
+           isFn(val["getDate"]);
 }                                                                       //isDate
 
 /** monthNameEN: Returns an English month name,
@@ -339,20 +339,20 @@ function isDate(val) {
  */
 function monthNameEN(num) {
     switch (num) {
-    case 1:  return $January;
-    case 2:  return $February;
-    case 3:  return $March;
-    case 4:  return $April;
-    case 5:  return $May;
-    case 6:  return $June;
-    case 7:  return $July;
-    case 8:  return $August;
-    case 9:  return $September;
-    case 10: return $October;
-    case 11: return $November;
-    case 12: return $December;
+    case 1:  return "January";
+    case 2:  return "February";
+    case 3:  return "March";
+    case 4:  return "April";
+    case 5:  return "May";
+    case 6:  return "June";
+    case 7:  return "July";
+    case 8:  return "August";
+    case 9:  return "September";
+    case 10: return "October";
+    case 11: return "November";
+    case 12: return "December";
     }
-    return $BLANK;
+    return "";
 }                                                                  //monthNameEN
 
 /** monthNumEN: Returns a month number from an English month name,
@@ -364,18 +364,18 @@ function monthNameEN(num) {
  */
 function monthNumEN(s) {
     switch (String(s).substr(0, 3).toLowerCase()) {
-    case $jan: return 1;
-    case $feb: return 2;
-    case $mar: return 3;
-    case $apr: return 4;
-    case $may: return 5;
-    case $jun: return 6;
-    case $jul: return 7;
-    case $aug: return 8;
-    case $sep: return 9;
-    case $oct: return 10;
-    case $nov: return 11;
-    case $dec: return 12;
+    case "jan": return 1;
+    case "feb": return 2;
+    case "mar": return 3;
+    case "apr": return 4;
+    case "may": return 5;
+    case "jun": return 6;
+    case "jul": return 7;
+    case "aug": return 8;
+    case "sep": return 9;
+    case "oct": return 10;
+    case "nov": return 11;
+    case "dec": return 12;
     }
     return 0;
 }                                                                   //monthNumEN
@@ -413,16 +413,16 @@ function year(num) {
  */
 function append(container, children) {
     if (!isObject(container)) {
-        err(0xE9C294,  // append(): arg 'container' is not an object
+        err(0xE9C294,              // append(): arg 'container' is not an object
             container);
         return null;
     }
-    if (children === null || typeof children == $undefined) {
-        err(0xE84748);  // append(): arg 'children' is null or undefined
+    if (children === null || typeof children == "undefined") {
+        err(0xE84748);          // append(): arg 'children' is null or undefined
         return null;
     }
     for (var i = 1, count = arguments.length; i < count; i++) {
-        container[$appendChild](arguments[i]);
+        container.appendChild(arguments[i]);
     }
     return container;
 }                                                                       //append
@@ -438,9 +438,9 @@ function body(doc) {
     if (arguments.length == 0 || doc === null) {
         doc = /**@type{!HTMLDocument}*/ (document);
     }
-    var list = doc.getElementsByTagName($body);
+    var list = doc.getElementsByTagName("body");
     if (list.length < 1) {
-        return /**@type{!HTMLBodyElement}*/ (document[$body]);
+        return /**@type{!HTMLBodyElement}*/ (document.body);
     }
     return /**@type{!HTMLBodyElement}*/ (list[0]);
 }                                                                         //body
@@ -459,30 +459,24 @@ function body(doc) {
  */
 function children(el, cssSelector) {
     if (arguments.length < 2 || undef(typeof cssSelector)) {
-        cssSelector = $BLANK;
+        cssSelector = "";
     }
     var /**@type{!Array<!HTMLElement>}*/ ret = [];
-    var ar  = cssSelector.split();
-    var tag = getPart(ar, $BLANK);  // tag
-    var cls = getPart(ar, $DOT);    // .class
-    var id  = getPart(ar, $HASH);   // #id
-    if (el === null) {
+    if (el === null || (typeof el != "object") || el.childNodes.length == 0) {
         return ret;
     }
-    if (typeof el != $object) {
-        return ret;
-    }
-    if (el.childNodes.length == 0) {
-        return ret;
-    }
+    var ar    = cssSelector.split();
+    var tag   = getPart(ar, "");  // tag
+    var cls   = getPart(ar, ".");    // .class
+    var id    = getPart(ar, "#");   // #id
     var stack = [];
     var child = /**@type{!HTMLElement}*/ (el.firstChild);
     var level = 0;
     do {
         if (child.nodeType != 3) {  // not a text node
-            if ((tag == $BLANK || tag == nodeName(child)) &&
-                (id  == $BLANK || id == elID(child)) &&
-                (cls == $BLANK || hasClass(child, cls))) {
+            if ((tag == "" || tag == nodeName(child)) &&
+                (id  == "" || id == elID(child)) &&
+                (cls == "" || hasClass(child, cls))) {
                     ret.push(child);
             }
             if (child.childNodes.length > 0) {
@@ -493,12 +487,10 @@ function children(el, cssSelector) {
             }
         }
         while (child.nextSibling === null && level >= 0) {
-            level--;
-            if (level >= 0) {
-                child = /**@type{!HTMLElement}*/ (stack[level]);
-            } else {
+            if (--level < 0) {
                 break;
             }
+            child = /**@type{!HTMLElement}*/ (stack[level]);
         }
         child = /**@type{!HTMLElement}*/ (child.nextSibling);
     } while (level >= 0 && child !== null);
@@ -514,7 +506,7 @@ function children(el, cssSelector) {
          *  @return {boolean}
          */
         var state = function(ch) {
-            if (ch == suffix || suffix == $BLANK) {
+            if (ch == suffix || suffix == "") {
                 /** @param {string} ch */
                 state = function(ch) {
                     if (!isIdentifier(ch)) {
@@ -527,7 +519,7 @@ function children(el, cssSelector) {
                     return true;
                 };
             }
-            return suffix == $BLANK;
+            return suffix == "";
         };
         return filter(  ar,
                         /** @param {string} ch */
@@ -536,13 +528,15 @@ function children(el, cssSelector) {
                         }
                      ).join().toLowerCase();
     }
-    /** isIdentifier: __
+    /** isIdentifier: returns true if character 'ch' is valid in an identifier
      *  @param {string} ch
      *  @return {boolean}
      */
     function isIdentifier(ch) {
-        return ch == $_ || (ch >= $a && ch <= $z) ||
-            (ch >= $A && ch <= $Z) || (ch >= $0 && ch <= $9);
+        return ch == "_" ||
+              (ch >= "0" && ch <= "9") ||
+              (ch >= "A" && ch <= "Z") ||
+              (ch >= "a" && ch <= "z");
     }
 }                                                                     //children
 
@@ -553,10 +547,10 @@ function children(el, cssSelector) {
  *  @return {string}
  */
 function elID(el) {
-    if (typeof el != $object || undef(typeof el[$id])) {
-        return $BLANK;
+    if (typeof el != "object" || undef(typeof el.id)) {
+        return "";
     }
-    return S(el[$id]).toLowerCase();
+    return S(el.id).toLowerCase();
 }                                                                         //elID
 
 /** getElementsByTagName: Identical to the DOM method of the same name,
@@ -591,17 +585,17 @@ function getInnerText(el) {
     // Firefox (2016)  no innerText
     // Firefox 1       no innerText
     if (el === null) {
-        return $BLANK;
+        return "";
     }
-    if (typeof (el[$innerText]) == $string) {
-        return el[$innerText];
+    if (typeof (el["innerText"]) == "string") {
+        return el["innerText"];
     }
     if (el.childNodes.length != 0 &&
         el.childNodes[el.childNodes.length - 1].nodeType == 3) {
         return el.childNodes[0].textContent;
     }
-    err(0xE578FF);  // getInnerText(): failed reading text
-    return $BLANK;
+    err(0xE578FF);                        // getInnerText(): failed reading text
+    return "";
 }                                                                 //getInnerText
 
 /** hasClass: Returns true if the given element contains
@@ -616,13 +610,13 @@ function getInnerText(el) {
  */
 function hasClass(el, nameList) {
     var type = typeof el;                           // ensure 'el' is an element
-    if (type == $string) {
+    if (type == "string") {
         el = /**@type{HTMLElement}*/ (sel(el));
     }
-    if (type != $object || el === null) {
+    if (type != "object" || el === null) {
         return false;
     }
-    if (typeof nameList == $string) {          // ensure 'nameList' is an array
+    if (typeof nameList == "string") {          // ensure 'nameList' is an array
         nameList = [nameList];
     } else if (!isArray(nameList)) {
         if (nameList !== null) {
@@ -632,22 +626,22 @@ function hasClass(el, nameList) {
         return false;
     }
     /**@type{string}*/
-    var classes = $BLANK;  // get element's full class name
-    if (el[$className]) {
-        classes = trim(S(el[$className]).toLowerCase());
+    var classes = "";  // get element's full class name
+    if (el.className) {
+        classes = trim(S(el.className).toLowerCase());
     }
     if (classes.length == 0) {
         return false;
     }
-    classes += $SPACE;
+    classes += " ";
     return isFound( /**@type{Array<string>}*/ (nameList),
                     /** @param {string} name */
-                    function(name) { //anonymous
+                    function(name) {
                         name = trim(name.toLowerCase());
-                        var part = $BLANK;
+                        var part = "";
                         for (var i = 0, end = classes.length; i < end; i++) {
-                            if (classes.charAt(i) == $SPACE) {
-                                part = $BLANK;
+                            if (classes.charAt(i) == " ") {
+                                part = "";
                             } else {
                                 part += classes.charAt(i);
                             }
@@ -670,7 +664,7 @@ function head(doc) {
     if (arguments.length == 0 || doc === null) {
         doc = /**@type{!HTMLDocument}*/ (document);
     }
-    var list = doc.getElementsByTagName($head);
+    var list = doc.getElementsByTagName("head");
     if (list.length < 1) {
         return null;
     }
@@ -689,20 +683,20 @@ function head(doc) {
  *  @return {!HTMLDivElement}
  */
 function makeDiv(config) {
-    var div = /**@type{!HTMLDivElement}*/ (makeEl($div));
+    var div = /**@type{!HTMLDivElement}*/ (makeEl("div"));
     if (def(typeof config.classes)) {
         setClass(true, div, config.classes);
     }
-    if (config[$onclick] !== null && typeof config[$onclick] !== $undefined) {
-        div[$onclick] = config[$onclick];
+    if (config.onclick !== null && typeof config.onclick !== "undefined") {
+        div.onclick = config.onclick;
     }
-    if (typeof config.text == $string) {
+    if (typeof config.text == "string") {
         setInnerText(div, S(config.text));
     }
     return div;
 }                                                                      //makeDiv
 
-/** makeCSSLink: __
+/** makeCSSLink: creates a link HTML element to link a CSS file
  *
  *  @param {string} path
  *  @param {HTMLDocument=} doc
@@ -710,15 +704,13 @@ function makeDiv(config) {
  *  @return {!HTMLLinkElement}
  */
 function makeCSSLink(path, doc) {
-    /**@type{HTMLLinkElement}*/
-    var ret;
     if (arguments.length > 1) {
-        ret = /**@type{!HTMLLinkElement}*/ (doc.createElement($link));
+        var ret = /**@type{!HTMLLinkElement}*/ (doc.createElement("link"));
     } else {
-        ret = /**@type{!HTMLLinkElement}*/ (document.createElement($link));
+        ret = /**@type{!HTMLLinkElement}*/ (document.createElement("link"));
     }
-    ret.rel  = $stylesheet;
-    ret.type = $text_css;
+    ret.rel  = "stylesheet";
+    ret.type = "text/css";
     ret.href = path;
     return ret;
 }                                                                  //makeCSSLink
@@ -744,12 +736,12 @@ function makeEl(elementType, classes) {
  */
 function makeFullscreenDiv() {
     var div = makeDiv({});
-    position(div, $fixed);
+    position(div, "fixed");
     left(div, 0);
     mTop(div, 0);
-    width(div, 100, $PERCENT);
-    height(div, 100, $PERCENT);
-    div[$style][$zIndex] = 200;  // must equal @dialog_z_index
+    width(div, 100, "%");
+    height(div, 100, "%");
+    div.style.zIndex = 200;  // must equal @dialog_z_index
     return div;
 }                                                            //makeFullscreenDiv
 
@@ -761,14 +753,14 @@ function makeFullscreenDiv() {
  *  @return {!string}
  */
 function nodeName(node) {
-    if (node === null || typeof node == $undefined) {
-        err(0xE4CB46);  // nodeName(): arg 'node' is null or undefined
-        return $BLANK;
+    if (node === null || typeof node == "undefined") {
+        err(0xE4CB46);            // nodeName(): arg 'node' is null or undefined
+        return "";
     }
-    var name = /**@type{(string|undefined)}*/ (node[$nodeName]);
-    if (name === null || typeof name == $undefined) {
-        err(0xE5D105);  // nodeName(): node name is null or undefined
-        return $BLANK;
+    var name = /**@type{(string|undefined)}*/ (node.nodeName);
+    if (name === null || typeof name == "undefined") {
+        err(0xE5D105);             // nodeName(): node name is null or undefined
+        return "";
     }
     return S(name).toLowerCase();
 }                                                                     //nodeName
@@ -825,45 +817,45 @@ function sel(elemOrSelector, parent) {
     /** @return {(HTMLElement|Array<HTMLElement>)} */
     function run() {
         if (parent === null) {
-            err(0xE376D4);  // sel(): arg 'parent' is null
+            err(0xE376D4);                        // sel(): arg 'parent' is null
             return null;
         }
         // if already given an object, return the same object
-        if (typeof elemOrSelector != $string) {
+        if (typeof elemOrSelector != "string") {
             return /**@type{HTMLElement}*/ (
-                   typeof elemOrSelector == $object ? elemOrSelector : null);
+                   typeof elemOrSelector == "object" ? elemOrSelector : null);
         }
         var s = trim(S(elemOrSelector));
         // if only an ID was given, select and return a single element
-        if (parent === document   &&  s[0] == $HASH &&
-            !contains(s, $DOT)  &&  !contains(s, $OBRACE)){
+        if (parent === document   &&  s[0] == "#" &&
+            !contains(s, ".")  &&  !contains(s, "[")){
             s = s.substr(1);
             return /**@type{HTMLElement}*/ (parent.getElementById(s));
         }
         // more complex selection based on tag, class and ID:
         // need to return a single element or an array?
-        var returnArray = s.charAt(0) == $OBRACE &&
-                          s.charAt(s.length - 1) == $CBRACE;
+        var returnArray = s.charAt(0) == "[" &&
+                          s.charAt(s.length - 1) == "]";
         if (returnArray) {
             s = s.substr(1, s.length - 2);
         }
         // extract tag, id, and class from the selector
         var part = /**@type{zr.ListRows}*/ ([[],[],[]]);
         var i    = 0;
-        forEach (s.split($BLANK), forFn);
+        forEach (s.split(""), forFn);
                 /** @param {string} ch */
                 function forFn(ch) {
-                    if (ch == $HASH) {
+                    if (ch == "#") {
                         i = 1;
-                    } else if (ch == $DOT) {
+                    } else if (ch == ".") {
                         i = 2;
                     } else {
                         part[i].push(ch);
                     }
                 }
-        var tag = trim(part[0].join($BLANK)).toLowerCase();
-        var id  = trim(part[1].join($BLANK)).toLowerCase();
-        var cls = trim(part[2].join($BLANK)).toLowerCase();
+        var tag = trim(part[0].join("")).toLowerCase();
+        var id  = trim(part[1].join("")).toLowerCase();
+        var cls = trim(part[2].join("")).toLowerCase();
         if (parent.childNodes.length == 0) {
             return returnArray ? [] : null;
         }
@@ -876,9 +868,9 @@ function sel(elemOrSelector, parent) {
         var level = 0;
         do {
             if (child.nodeType != 3) {  // not a text node
-                if ((tag == $BLANK || tag == nodeName(child)) &&
-                    (id  == $BLANK || id == elID(child)) &&
-                    (cls == $BLANK || hasClass(child, cls))) {
+                if ((tag == "" || tag == nodeName(child)) &&
+                    (id  == "" || id == elID(child)) &&
+                    (cls == "" || hasClass(child, cls))) {
                         if (!returnArray) {
                             return child;
                         }
@@ -908,7 +900,7 @@ function sel(elemOrSelector, parent) {
     }
 }                                                                          //sel
 
-/** selID: __
+/** selID: selects an element by its ID
  *
  *  @param {string} id
  *  @param {(HTMLDocument|HTMLElement|null)=} parent
@@ -916,20 +908,20 @@ function sel(elemOrSelector, parent) {
  *  @return {HTMLElement}
  */
 function selID(id, parent) {
-    if (typeof id != $string) {
-        err(0xEC4C42);  // selID(): arg 'id' is not a string
+    if (typeof id != "string") {
+        err(0xEC4C42);                      // selID(): arg 'id' is not a string
         return null;
     }
     if (id.length == 0) {
-        err(0xEDE83D);  // selID(): arg 'id' must not be an empty string
+        err(0xEDE83D);          // selID(): arg 'id' must not be an empty string
         return null;
     }
-    if (id[0] != $HASH) {
-        id = $HASH + id;
+    if (id[0] != "#") {
+        id = "#" + id;
     }
     var el = /**@type{HTMLElement}*/ (sel(id, parent));
     if (isArray(el)) {
-        err(0xEAD2E8);  // selID(): specified 'id' not found
+        err(0xEAD2E8);                      // selID(): specified 'id' not found
         return null;
     }
     return el;
@@ -949,18 +941,18 @@ function setClass(state, item, classes) {
     var ob   = /**@type{Object}*/ (item);
     var type = typeof item;
     // if 'item' is an object, use its className, if string, use it directly
-    if (type == $object) {
+    if (type == "object") {
         /**@type{!string}*/
-        var list = /**@type{!string}*/ (ob[$className]);
-    } else if (type == $string) {
+        var list = /**@type{!string}*/ (ob[("className")]);
+    } else if (type == "string") {
         list = /**@type{!string}*/ (item);
     } else {
-        err(0xE8E2F2);  // setClass(): arg 'item' not an element or string
+        err(0xE8E2F2);        // setClass(): arg 'item' not an element or string
         return null;
     }
     for (var i = 2, count = arguments.length; i < count; i++) {
         var arg = /**@type{(string|Array<string>)}*/ (arguments[i]);
-        if (typeof arg == $string) {
+        if (typeof arg == "string") {
             alterList(state, S(arg));
         } else if (isArray(arg)) {
             var ar = extractStrings(arg);
@@ -968,19 +960,19 @@ function setClass(state, item, classes) {
                 alterList(state, S(ar[j]));
             }
         } else if (arg !== null) {
-            err(0xEC3C03,  // setClass(): wrong argument type
+            err(0xEC3C03,                     // setClass(): wrong argument type
                 typeof arg);
         }
     }
     list = trim(list);
-    if (type == $string) {
+    if (type == "string") {
         return list;
     }
-    if (type != $object) {
-        err(0xE7A8D4);  // setClass(): arg 'item' is not a string or element
+    if (type != "object") {
+        err(0xE7A8D4);      // setClass(): arg 'item' is not a string or element
         return null;
     }
-    ob[$className] = list;
+    ob.className = list;
     return ob;
     /** alterList: __
      *  captures 'list'
@@ -990,17 +982,17 @@ function setClass(state, item, classes) {
     function alterList(state, className) {
         // for debugging:
         // var oldList = list;
-        var lowName = $SPACE + className.toLowerCase() + $SPACE;
+        var lowName = " " + className.toLowerCase() + " ";
         if (state) {
-            if (!contains(($SPACE + list.toLowerCase() + $SPACE), lowName)) {
+            if (!contains((" " + list.toLowerCase() + " "), lowName)) {
                 if (list.length > 0) {
-                    list += $SPACE;
+                    list += " ";
                 }
                 list += className;
             }
         } else {
             do {
-                var i = ($SPACE + list.toLowerCase() + $SPACE).indexOf(lowName);
+                var i = (" " + list.toLowerCase() + " ").indexOf(lowName);
                 if (i > -1) {
                     list = list.substr(0, i) +
                            list.substr(i + 1 + className.length);
@@ -1027,8 +1019,8 @@ function setInnerText(el, text) {
     // Firefox (2016)  no innerText
     // Firefox 1       no innerText
     //
-    if (typeof (el[$innerText]) == $string) {
-        el[$innerText] = text;
+    if (typeof (el["innerText"]) == "string") {
+        el["innerText"] = text;
     } else if (el.childNodes.length != 0 &&
         el.childNodes[el.childNodes.length - 1].nodeType == 3) {
         el.childNodes[0].textContent = text;
@@ -1055,17 +1047,17 @@ function absoluteX(el) {
     if (el.getBoundingClientRect) {  // not supported in Firefox 1
         return el.getBoundingClientRect().left;
     }
-    var offsetPrev = N(el[$offsetLeft]);
+    var offsetPrev = N(el.offsetLeft);
     var x = 0;
     do {
-        var offset = N(el[$offsetLeft]);
+        var offset = N(el.offsetLeft);
         if (offset != 0 && offset != offsetPrev) {
-            offset = N(el[$offsetLeft]);
+            offset = N(el.offsetLeft);
             x += offset;
             offsetPrev = offset;
         }
         el = /**@type{!HTMLElement}*/ (el.parentNode);
-    } while (el.tagName.toLowerCase() != $html);
+    } while (el.tagName.toLowerCase() != "html");
     return x;
 }                                                                    //absoluteX
 
@@ -1083,17 +1075,17 @@ function absoluteY(el) {
     if (el.getBoundingClientRect) {  // not supported in Firefox 1
         return el.getBoundingClientRect().top;
     }
-    var offsetPrev = N(el[$offsetTop]);
+    var offsetPrev = N(el.offsetTop);
     var y          = 0;
     do {
-        var offset = N(el[$offsetTop]);
+        var offset = N(el.offsetTop);
         if (offset != 0 && offset != offsetPrev) {
-            offset = N(el[$offsetTop]);
+            offset = N(el.offsetTop);
             y += offset;
             offsetPrev = offset;
         }
         el = /**@type{!HTMLElement}*/ (el.parentNode);
-    } while (el.tagName.toLowerCase() != $html);
+    } while (el.tagName.toLowerCase() != "html");
     return y;
 }                                                                    //absoluteY
 
@@ -1108,18 +1100,18 @@ function centerInWindow(el) {
     if (el === null) {
         return;
     }
-    var x = Math.round((windowWidth()  - el[$offsetWidth])  / 2);
-    var y = Math.round((windowHeight() - el[$offsetHeight]) / 2);
+    var x = Math.round((windowWidth()  - el.offsetWidth)  / 2);
+    var y = Math.round((windowHeight() - el.offsetHeight) / 2);
     if (y < 50) {
         y = 50;
     }
-    if (position(el) != $absolute) {
-        position(el, $absolute);
+    if (position(el) != "absolute") {
+        position(el, "absolute");
     }
-    if (left(el) != x + $px) {
+    if (left(el) != x + "px") {
         left(el, x);
     }
-    if (mTop(el) != y + $px) {
+    if (mTop(el) != y + "px") {
         mTop(el, y);
     }
 }                                                               //centerInWindow
@@ -1135,7 +1127,7 @@ function offsetHeight(el) {
     if (el === null) {
         return 0;
     }
-    return el[$offsetHeight];
+    return el.offsetHeight;
 }                                                                 //offsetHeight
 
 /** offsetWidth: Returns the width of element 'el'.
@@ -1149,7 +1141,7 @@ function offsetWidth(el) {
     if (el === null) {
         return 0;
     }
-    return el[$offsetWidth];
+    return el.offsetWidth;
 }                                                                  //offsetWidth
 
 /** windowHeight: Returns the height of the browser window.
@@ -1160,8 +1152,8 @@ function windowHeight() {
     if (window.innerHeight) {
         return N(window.innerHeight);
     }
-    if (document.documentElement[$clientHeight]) {
-        return N(document.documentElement[$clientHeight]);
+    if (document.documentElement.clientHeight) {
+        return N(document.documentElement.clientHeight);
     }
     return -1;
 }                                                                 //windowHeight
@@ -1174,8 +1166,8 @@ function windowWidth() {
     if (window.innerWidth) {
         return window.innerWidth;
     }
-    if (document.documentElement[$clientWidth]) {
-        return document.documentElement[$clientWidth];
+    if (document.documentElement.clientWidth) {
+        return document.documentElement.clientWidth;
     }
     return -1;
 }                                                                  //windowWidth
@@ -1194,7 +1186,7 @@ function x(el) {
     if (el.getBoundingClientRect) {  // not supported in Firefox 1
         return el.getBoundingClientRect().left;
     }
-    return el[$offsetLeft];
+    return el.offsetLeft;
 }                                                                            //x
 
 /** y: Returns the top (y-axis) position of an element 'el'.
@@ -1211,7 +1203,7 @@ function y(el) {
     if (el.getBoundingClientRect) {  // not supported in Firefox 1
         return el.getBoundingClientRect().top;
     }
-    return el[$offsetTop];
+    return el.offsetTop;
 }                                                                            //y
 
 /** zIndexMax: Returns the maximum z-index of
@@ -1221,10 +1213,10 @@ function y(el) {
  */
 function zIndexMax() {
     var max  = -1000000;
-    var divs = body().getElementsByTagName($div);
+    var divs = body().getElementsByTagName("div");
     for (var i = 0; i < divs.length; i++) {
-        if (divs[i][$style][$zIndex] > max) {
-            max = N(divs[i][$style][$zIndex]);
+        if (divs[i].style.zIndex > max) {
+            max = N(divs[i].style.zIndex);
         }
     }
     if (max < 0) {
@@ -1260,21 +1252,21 @@ function cancelEvent(ev) {
  *  @return {HTMLElement}
  */
 function eventSrc(ob) {
-    if (typeof ob == $boolean) {
+    if (typeof ob == "boolean") {
         return null;
     }
     // Mozilla/Firefox passes the event object as an argument
-    if (typeof ob == $object) {
-        if (ob[$currentTarget]) {
-            return /**@type{HTMLElement}*/ (ob[$currentTarget]);
+    if (typeof ob == "object") {
+        if (ob.currentTarget) {
+            return /**@type{HTMLElement}*/ (ob.currentTarget);
         }
-        if (ob[$srcElement]) {
-            return /**@type{HTMLElement}*/ (ob[$srcElement]);
+        if (ob.srcElement) {
+            return /**@type{HTMLElement}*/ (ob.srcElement);
         }
-        if (ob[$nodeName]) {
+        if (ob.nodeName) {
             return /**@type{HTMLElement}*/ (ob);
         }
-        err(0xE3FC92);  // eventSrc(): failed getting event source
+        err(0xE3FC92);                // eventSrc(): failed getting event source
         return null;
     }
     // IE does not, so use the 'window' object to get the event,
@@ -1284,7 +1276,7 @@ function eventSrc(ob) {
         if (wnd.event.srcElement) {
             return /**@type{HTMLElement}*/ (wnd.event.srcElement);
         }
-        err(0xE3C502);  // eventSrc(): failed getting event source
+        err(0xE3C502);                // eventSrc(): failed getting event source
     }
     wnd = /**@type{!zr.IWindow}*/ (window);
     if (wnd.frames[0]) {
@@ -1292,12 +1284,12 @@ function eventSrc(ob) {
         if (wnd.event && wnd.event.srcElement) {
             return /**@type{HTMLElement}*/ (wnd.event.srcElement);
         }
-        err(0xEF4D1E);  // eventSrc(): failed getting event source
+        err(0xEF4D1E);                // eventSrc(): failed getting event source
         return null;
     }
     //TODO: add a loop to iterate through all frames
     //TODO: check IE compatibility with [0] !!!
-    err(0xE0B3D9);  // eventSrc(): event source not found, returning null
+    err(0xE0B3D9);         // eventSrc(): event source not found, returning null
     return null;
 }                                                                     //eventSrc
 
@@ -1314,13 +1306,13 @@ function listen(eventName, callback, elements) {
                  (sel(/**@type{(HTMLElement|string)}*/ (elements[i])));
         if (el !== null) {
             if (el.addEventListener) {
-                if (eventName.substring(0, 2) == $on) {
+                if (eventName.substring(0, 2) == "on") {
                     eventName = eventName.substring(2);
                 }
                 el.addEventListener(eventName, callback, true);
             } else if (el.attachEvent) {
-                if (eventName.substring(0, 2) != $on) {
-                    eventName = $on + eventName;
+                if (eventName.substring(0, 2) != "on") {
+                    eventName = "on" + eventName;
                 }
                 el.attachEvent(eventName, callback);
             }
@@ -1341,7 +1333,7 @@ function unlisten(eventName, callback, elements) {
         if (el.removeEventListener) {
             el.removeEventListener(eventName, callback, false);
         } else if (el.detachEvent) {
-            el.detachEvent($on + eventName, callback);
+            el.detachEvent("on" + eventName, callback);
         }
     }
 }                                                                     //unlisten
@@ -1392,7 +1384,7 @@ function combine(objects) {
     var i        = 0;
     var itm      = null;
     var ob       = null;
-    var propName = $BLANK;
+    var propName = "";
     var ret      = {};
     //
     // create a uniform array of objects
@@ -1406,12 +1398,12 @@ function combine(objects) {
                 itm = /**@type{(Object|Array)}*/ (arg[i]);
                 if (isArray(itm)) {
                     if (/**@type{Array}*/ (itm).length == 2 &&
-                        typeof itm[0] == $string) {
+                        typeof itm[0] == "string") {
                             ob = {};
                             ob[itm[0]] = itm[1];
                             ar.push(ob);
                     } else {
-                        err(0xEB62DC);  // combine(): length of item is not 2
+                        err(0xEB62DC);     // combine(): length of item is not 2
                     }
                 } else if (isObject(itm)) {
                     ar.push(itm);
@@ -1443,13 +1435,13 @@ function combine(objects) {
  *  @return {boolean}
  */
 function every(ar, predicateFn) {
-    if (typeof predicateFn != $function) {
-        err(0xE1C2E8);  // every(): arg 'predicateFn' is not a function
+    if (typeof predicateFn != "function") {
+        err(0xE1C2E8);           // every(): arg 'predicateFn' is not a function
         return false;
     }
     if (!isArray(ar)) {
         if (ar !== null) {
-            err(0xE68718);  // every(): arg 'ar' is not an array or null
+            err(0xE68718);          // every(): arg 'ar' is not an array or null
         }
         return false;
     }
@@ -1479,13 +1471,13 @@ function every(ar, predicateFn) {
  *  @return {Array}
  */
 function filter(ar, predicateFn, selectTrue) {
-    if (typeof predicateFn != $function) {
-        err(0xE8E4A3);  // filter(): arg 'predicateFn' is not a function
+    if (typeof predicateFn != "function") {
+        err(0xE8E4A3);          // filter(): arg 'predicateFn' is not a function
         return ar;
     }
     if (!isArray(ar)) {
         if (ar !== null) {
-            err(0xE5EF84);  // filter(): arg 'ar' is not an array or null
+            err(0xE5EF84);         // filter(): arg 'ar' is not an array or null
         }
         return null;
     }
@@ -1493,7 +1485,7 @@ function filter(ar, predicateFn, selectTrue) {
     if (count < 1) {
         return [];
     }
-    if (typeof selectTrue == $undefined) {
+    if (typeof selectTrue == "undefined") {
         selectTrue = true;
     }
     var ret = [];
@@ -1519,13 +1511,13 @@ function filter(ar, predicateFn, selectTrue) {
  *  @return {*}
  */
 function find(ar, predicateFn) {
-    if (typeof predicateFn != $function) {
-        err(0xE1EC5C);  // find(): arg 'predicateFn' is not a function
+    if (typeof predicateFn != "function") {
+        err(0xE1EC5C);            // find(): arg 'predicateFn' is not a function
         return ar;
     }
     if (!isArray(ar)) {
         if (ar !== null) {
-            err(0xE6C9C4);  // find(): arg 'ar' is not an array or null
+            err(0xE6C9C4);           // find(): arg 'ar' is not an array or null
         }
         return null;
     }
@@ -1551,13 +1543,13 @@ function find(ar, predicateFn) {
  *  @return {Array}
  */
 function forEach(ar, applyFn) {
-    if (typeof applyFn != $function) {
-        err(0xE416BC);  // forEach(): arg 'applyFn' is not a function
+    if (typeof applyFn != "function") {
+        err(0xE416BC);             // forEach(): arg 'applyFn' is not a function
         return ar;
     }
     if (!isArray(ar)) {
         if (ar !== null) {
-            err(0xE8AF1D,  // forEach(): arg 'ar' is not an array or null
+            err(0xE8AF1D,         // forEach(): arg 'ar' is not an array or null
                 ar);
         }
         return ar;
@@ -1566,7 +1558,7 @@ function forEach(ar, applyFn) {
     if (count < 1) {
         return ar;
     }
-    if ($forEach in ar) {
+    if ("forEach" in ar) {
         ar.forEach (applyFn);
         return ar;
     }
@@ -1608,13 +1600,13 @@ function hasProperty(propName, ob) {
  *  @return {!boolean}
  */
 function isFound(ar, predicateFn) {
-    if (typeof predicateFn != $function) {
-        err(0xE4C1E5);  // isFound(): arg 'predicateFn' is not a function
+    if (typeof predicateFn != "function") {
+        err(0xE4C1E5);         // isFound(): arg 'predicateFn' is not a function
         return false;
     }
     if (!isArray(ar)) {
         if (ar !== null) {
-            err(0xE67A21);  // isFound(): arg 'ar' is not an array or null
+            err(0xE67A21);        // isFound(): arg 'ar' is not an array or null
         }
         return false;
     }
@@ -1636,10 +1628,10 @@ function isFn(val) {
     //
     // this check is needed because typeof null is 'object'
     var type = typeof val;
-    if (type == $undefined || val === null) {
+    if (type == "undefined" || val === null) {
         return false;
     }
-    return type == $function;
+    return type == "function";
 }                                                                         //isFn
 
 /** isOneOf: Returns true if 'val' is within array 'ar'.
@@ -1653,7 +1645,7 @@ function isFn(val) {
 function isOneOf(val, ar) {
     if (!isArray(ar)) {
         if (ar !== null) {
-            err(0xE2C727);  // isOneOf(): arg 'ar' is not an array or null
+            err(0xE2C727);        // isOneOf(): arg 'ar' is not an array or null
         }
         return false;
     }
@@ -1696,13 +1688,13 @@ function keyValue(key, val) {
  *  @return {Array}
  */
 function map(ar, applyFn) {
-    if (typeof applyFn != $function) {
-        err(0xEB880F);  // map(): arg 'applyFn' is not a function
+    if (typeof applyFn != "function") {
+        err(0xEB880F);                 // map(): arg 'applyFn' is not a function
         return ar;
     }
     if (!isArray(ar)) {
         if (ar !== null) {
-            err(0xE52F65);  // map(): arg 'ar' is not an array or null
+            err(0xE52F65);            // map(): arg 'ar' is not an array or null
         }
         return null;
     }
@@ -1710,7 +1702,7 @@ function map(ar, applyFn) {
     if (count < 1) {
         return [];
     }
-    if ($map in ar) {
+    if ("map" in ar) {
         return ar.map(applyFn);
     }
     var ret = [];
@@ -1751,7 +1743,7 @@ function properties(ob) {
 function range(ar, first, last) {
     if (!isArray(ar)) {
         if (ar !== null) {
-            err(0xE98A87);  // range(): arg 'ar' is not an array or null
+            err(0xE98A87);          // range(): arg 'ar' is not an array or null
         }
         return null;
     }
@@ -1780,13 +1772,13 @@ function range(ar, first, last) {
  *  @return {*}
  */
 function reduce(ar, applyFn, initialVal) {
-    if (typeof applyFn != $function) {
-        err(0xE3CB6D);  // reduce(): arg 'applyFn' is not a function
+    if (typeof applyFn != "function") {
+        err(0xE3CB6D);              // reduce(): arg 'applyFn' is not a function
         return ar;
     }
     if (!isArray(ar)) {
         if (ar !== null) {
-            err(0xE52DCD);  // reduce(): arg 'ar' is not an array or null
+            err(0xE52DCD);         // reduce(): arg 'ar' is not an array or null
         }
         return null;
     }
@@ -1795,7 +1787,7 @@ function reduce(ar, applyFn, initialVal) {
     if (count < 1) {
         return hasInitialVal ? initialVal : null;
     }
-    if ($reduce in ar) {
+    if ("reduce" in ar) {
         if (hasInitialVal) {
             return ar.reduce(applyFn, initialVal);
         }
@@ -1825,13 +1817,13 @@ function reduce(ar, applyFn, initialVal) {
  *  @return {Array}
  */
 function until(ar, predicateFn) {
-    if (typeof predicateFn != $function) {
-        err(0xE8D39F);  // until(): arg 'predicateFn' is not a function
+    if (typeof predicateFn != "function") {
+        err(0xE8D39F);           // until(): arg 'predicateFn' is not a function
         return ar;
     }
     if (!isArray(ar)) {
         if (ar !== null) {
-            err(0xE91B1A);  // until(): arg 'ar' is not an array or null
+            err(0xE91B1A);          // until(): arg 'ar' is not an array or null
         }
         return null;
     }
@@ -1859,13 +1851,13 @@ function until(ar, predicateFn) {
  *  @return {*}
  */
 function use(ob, applyFn) {
-    if (typeof applyFn != $function) {
-        err(0xE22152);  // use(): arg 'applyFn' is not a function
+    if (typeof applyFn != "function") {
+        err(0xE22152);                 // use(): arg 'applyFn' is not a function
         return null;
     }
     if (!isObject(ob)) {
         if (ob !== null) {
-            err(0xE88E4A);  // use(): arg 'ob' is not an array or null
+            err(0xE88E4A);            // use(): arg 'ob' is not an array or null
         }
         return null;
     }
@@ -1884,10 +1876,10 @@ function use(ob, applyFn) {
  *  @param {?string} optPageName
  */
 function backToPage(optPageName) {
-    var pageName = optPageName || $ZR_REFERER_PAGE;
+    var pageName = optPageName || "zr_rp";
     if (def(typeof sessionStorage)) {
         var /**@type{?string}*/ h = sessionStorage[pageName];
-        if (typeof h == $string) {
+        if (typeof h == "string") {
             location.href = S(h);
             return;
         }
@@ -1903,24 +1895,24 @@ function backToPage(optPageName) {
 function browserType() {
     var agent = navigator.userAgent.toLowerCase();
     if (/seamonkey/.test(agent)) {
-        return $seamonkey;
+        return "seamonkey";
     }
     if (/firefox/.test(agent)) {
-        return $firefox;
+        return "firefox";
     }
     if (/chrome/.test(agent)) {
-        return $chrome;
+        return "chrome";
     }
     if (/safari/.test(agent)) {
-        return $safari;
+        return "safari";
     }
     if (/msie/.test(agent)) {
-        return $msie;
+        return "msie";
     }
     if (/opera/.test(agent)) {
-        return $opera;
+        return "opera";
     }
-    return $other;
+    return "other";
 }                                                                  //browserType
 
 /** def: Returns true if 'typeStr' is not 'undefined'.
@@ -1931,7 +1923,7 @@ function browserType() {
  *  @return {!boolean}
  */
 function def(typeStr) {
-    return typeStr != $undefined;
+    return typeStr != "undefined";
 }                                                                          //def
 
 /** err: Logs an error message. If 'console' is available, displays the
@@ -1945,9 +1937,9 @@ function err(errorNum, values) {
     // if error messages are available, lookup the error description
     // (to save resources, messages are not loaded in production deployment)
     var hex = errorNum.toString(16).toUpperCase();
-    var msg = $ERROR_0X + hex;
-    if (window[$zr_errors]) {
-        var errors = /**@type{Array<string>}*/ (window[$zr_errors]);
+    var msg = "Error 0x" + hex;
+    if (window["zr_errors"]) {
+        var errors = /**@type{Array<string>}*/ (window["zr_errors"]);
         var findNum = msg.substring(2);
         for (var i = 0, count = errors.length; i < count; i++) {
             var s = errors[i];
@@ -1980,13 +1972,13 @@ function err(errorNum, values) {
  *  @return {*}
  */
 function getOn(ob, name, defaultVal) {
-    if (typeof defaultVal == $undefined) {
+    if (typeof defaultVal == "undefined") {
         defaultVal = null;
     }
-    if (ob            !== null && typeof ob            == $object &&
-        ob[$zr]       !== null && typeof ob[$zr]       == $object &&
-        ob[$zr][name] !== null && typeof ob[$zr][name] != $undefined) {
-            return /**@type{*}*/ (ob[$zr][name]);
+    if (ob            !== null && typeof ob            == "object" &&
+        ob["zr"]       !== null && typeof ob["zr"]       == "object" &&
+        ob["zr"][name] !== null && typeof ob["zr"][name] != "undefined") {
+            return /**@type{*}*/ (ob["zr"][name]);
     }
     return defaultVal;
 }                                                                        //getOn
@@ -1998,7 +1990,7 @@ function getOn(ob, name, defaultVal) {
  *  @return {*}
  */
 function getVal(ob) {
-    return ob[$value];
+    return ob[("value")];
 }                                                                       //getVal
 
 /** httpDelete: Sends a HTTP DELETE request via XMLHttpRequest.
@@ -2007,7 +1999,7 @@ function getVal(ob) {
  *  @param {!function(zr.Response)} callback
  */
 function httpDelete(url, callback) {
-    httpRequest($delete, url, $BLANK, callback);
+    httpRequest("delete", url, "", callback);
 }                                                                   //httpDelete
 
 /** httpGet: Sends a HTTP GET request via XMLHttpRequest.
@@ -2016,7 +2008,7 @@ function httpDelete(url, callback) {
  *  @param {!function(zr.Response)} callback
  */
 function httpGet(url, callback) {
-    httpRequest($get, url, $BLANK, callback);
+    httpRequest("get", url, "", callback);
 }                                                                      //httpGet
 
 /** httpPost: Sends a HTTP POST request via XMLHttpRequest.
@@ -2026,7 +2018,7 @@ function httpGet(url, callback) {
  *  @param {!function(zr.Response)} callback
  */
 function httpPost(url, data, callback) {
-    httpRequest($post, url, data, callback);
+    httpRequest("post", url, data, callback);
 }                                                                     //httpPost
 
 /** httpPut: Sends a HTTP PUT request via XMLHttpRequest.
@@ -2036,7 +2028,7 @@ function httpPost(url, data, callback) {
  *  @param {!function(zr.Response)} callback
  */
 function httpPut(url, data, callback) {
-    httpRequest($put, url, data, callback);
+    httpRequest("put", url, data, callback);
 }                                                                      //httpPut
 
 /** httpRequest: Sends a HTTP request via XMLHttpRequest.
@@ -2048,68 +2040,69 @@ function httpPut(url, data, callback) {
  */
 function httpRequest(method, url, data, callback) {
     method = method.toUpperCase();
-    if (typeof url == $string) {
+    if (typeof url == "string") {
         /**@type{string}*/
         var urlStr = S(url);
     } else if (isArray(url)) {
-        urlStr = $BLANK;
+        urlStr = "";
         for (var i = 0, count = url.length; i < count; i++) {
-            urlStr += $SLASH + S(url[i]);
+            urlStr += "/" + S(url[i]);
         }
     } else {
-        err(0xE6E7B3);  // httpRequest(): arg 'url' is not a string or array
+        err(0xE6E7B3);      // httpRequest(): arg 'url' is not a string or array
         return;
     }
     urlStr = urlStr.toLowerCase();
     var resp = /**@type{!zr.Response}*/
-               ({ err: 0, status: 0, status_text: $BLANK, text: $BLANK });
-    if (window[$ActiveXObject]) {
+               ({ err: 0, status: 0, status_text: "", text: "" });
+    if (window.ActiveXObject) {
         var /**@type{XMLHttpRequest}*/ xhr = /**@type{XMLHttpRequest}*/
             (   new /**@type{!function(new:Object,string)}*/
-                (ActiveXObject)($MICROSOFT_XMLHTTP)                         );
+                (ActiveXObject)("Microsoft.XMLHTTP")                         );
     } else {
         xhr = new XMLHttpRequest();
     }
     // append a timestamp+random string, to guarantee caching is disabled
-    var timestamp = $_ + $_ + (new Date()).getTime() + $_ +
-        ($BLANK + Math.random()).substr(2, 4);
-    xhr.open(method, urlStr + $SLASH + timestamp, true);
-    xhr.setRequestHeader($CONTENT_TYPE,  $APPLICATION_JSON);
-    xhr.setRequestHeader($CACHE_CONTROL, $NO_CACHE);
-    xhr.onreadystatechange = function() { //anonymous
-        switch (xhr.readyState) {
-        case 0:  // uninitialized
-        case 1:  // loading
-        case 2:  // loaded
-        case 3:  // interactive
-            break;
-        case 4:
-            resp[$err]         = xhr[$status] == 200 ? 0 : 1;
-            resp[$status]      = xhr[$status];
-            resp[$status_text] = xhr[$statusText];
-            resp[$text]        = xhr[$responseText];
-            /*
-            console.log("httpReq()", resp[$status_text], ": ", resp[$text]);
-            */
-            callback(resp);
-            break;
-        default:
-            resp[$err]         = 2;
-            resp[$status]      = xhr[$status];
-            resp[$status_text] = xhr[$statusText];
-            resp[$text]        = $BLANK;
-            xhr.abort();
-            //console.log("httpRequest() -> failed");
-            callback(resp);
-            break;
-        }
-    };
+    var timestamp = "_" + "_" + (new Date()).getTime() + "_" +
+        ("" + Math.random()).substr(2, 4);
+    xhr.open(method, urlStr + "/" + timestamp, true);
+    xhr.setRequestHeader("Content-Type",  "application/json");
+    xhr.setRequestHeader("Cache-Control", "no-cache");
+    xhr.onreadystatechange =
+        function() {
+            switch (xhr.readyState) {
+            case 0:  // uninitialized
+            case 1:  // loading
+            case 2:  // loaded
+            case 3:  // interactive
+                break;
+            case 4:
+                resp["err"]         = xhr.status == 200 ? 0 : 1;
+                resp.status      = xhr.status;
+                resp["status_text"] = xhr.statusText;
+                resp.text        = xhr.responseText;
+                /*
+                console.log("httpReq()", resp["status_text"], ": ", resp.text);
+                */
+                callback(resp);
+                break;
+            default:
+                resp["err"]         = 2;
+                resp.status      = xhr.status;
+                resp["status_text"] = xhr.statusText;
+                resp.text        = "";
+                xhr.abort();
+                //console.log("httpRequest() -> failed");
+                callback(resp);
+                break;
+            }
+        };
     try {
         xhr.send(data);
     } catch(ex) {
-        resp[$err]         = 3;
-        resp[$status]      = 0;
-        resp[$status_text] = $XHR_SEND_ERROR;
+        resp["err"]         = 3;
+        resp.status      = 0;
+        resp["status_text"] = "xhr.send() error";
         callback(resp);
     }
 }                                                                  //httpRequest
@@ -2121,13 +2114,13 @@ function httpRequest(method, url, data, callback) {
  *  @return {!boolean}
  */
 function isArray(ob) {
-    if (typeof ob == $undefined || ob === null) {
+    if (typeof ob == "undefined" || ob === null) {
         return false;
     }
     if (Array.isArray) {
         return Array.isArray(ob);
     }
-    return Object.prototype.toString.call(ob) == $OBJECT_ARRAY;
+    return Object.prototype.toString.call(ob) == "[object Array]";
 }                                                                      //isArray
 
 /** isIE6: Returns true if the browser is Internet Exlorer 6.
@@ -2147,10 +2140,10 @@ function isIE6() {
 function isObject(val) {
     // this check is needed because typeof null is 'object'
     var type = typeof val;
-    if (type == $undefined || val === null) {
+    if (type == "undefined" || val === null) {
         return false;
     }
-    return type == $object;
+    return type == "object";
 }                                                                     //isObject
 
 /** isTrue: Returns true if 'val' evaluates
@@ -2164,9 +2157,9 @@ function isObject(val) {
  *  @return {!boolean}
  */
 function isTrue(val) {
-    return (typeof val == $boolean && val === true) ||
-           (typeof val == $number  && val != 0)     ||
-           (typeof val == $string  && trim(S(val)).toLowerCase() == $true);
+    return (typeof val == "boolean" && val === true) ||
+           (typeof val == "number"  && val != 0)     ||
+           (typeof val == "string"  && trim(S(val)).toLowerCase() == "true");
 }                                                                       //isTrue
 
 /** max: Returns the greater of two numbers or strings.
@@ -2203,20 +2196,20 @@ function min(a, b) {
  */
 function nodeTypeName(nodeTypeNum) {
     switch (nodeTypeNum) {
-    case 1:  return $element;
-    case 2:  return $attribute;
-    case 3:  return $text;
-    case 4:  return $cdata_section;
-    case 5:  return $entity_reference;
-    case 6:  return $entity;
-    case 7:  return $processing_instruction;
-    case 8:  return $comment;
-    case 9:  return $document;
-    case 10: return $document_type;
-    case 11: return $document_fragment;
-    case 12: return $notation;
+    case 1:  return "element";
+    case 2:  return "attribute";
+    case 3:  return "text";
+    case 4:  return "cdata_section";
+    case 5:  return "entity_reference";
+    case 6:  return "entity";
+    case 7:  return "processing_instruction";
+    case 8:  return "comment";
+    case 9:  return "document";
+    case 10: return "document_type";
+    case 11: return "document_fragment";
+    case 12: return "notation";
     }
-    return $BLANK;
+    return "";
 }                                                                 //nodeTypeName
 
 /** setBackPage: Sets a referer page. Used by backToPage().
@@ -2229,10 +2222,10 @@ function setBackPage(optPageName, optHref) {
         return;
     }
     var href = optHref || S(location.href);
-    if (href.substr(href.length - 1, 1) == $HASH) {
+    if (href.substr(href.length - 1, 1) == "#") {
         href = href.substr(0, href.length - 1);
     }
-    sessionStorage.setItem(optPageName || $ZR_REFERER_PAGE, href);
+    sessionStorage.setItem(optPageName || "zr_rp", href);
 }                                                                  //setBackPage
 
 /** setOn: Attaches .zr.setting to an object.
@@ -2242,10 +2235,10 @@ function setBackPage(optPageName, optHref) {
  *  @param {*} val
  */
 function setOn(ob, name, val) {
-    if (undef(typeof ob[$zr])) {
-        ob[$zr] = {};
+    if (undef(typeof ob["zr"])) {
+        ob["zr"] = {};
     }
-    ob[$zr][name] = val;
+    ob["zr"][name] = val;
 }                                                                        //setOn
 
 /** setVal: Sets an element's or object's 'value' property.
@@ -2254,7 +2247,7 @@ function setOn(ob, name, val) {
  *  @param {*} value
  */
 function setVal(ob, value) {
-    ob[$value] = value;
+    ob.value = value;
 }                                                                       //setVal
 
 /** showNotification: Displays a 'traffic light'
@@ -2264,13 +2257,13 @@ function setVal(ob, value) {
  *  @param {string} color
  */
 function showNotification(msg, color) {
-    var div = selID($ZR_NOTIFY);
+    var div = selID("zr_nt");
     if (div === null) {
-        div = /**@type{HTMLDivElement}*/ (makeEl($div, [$ZR_NOTIFY]));
-        div[$id] = $ZR_NOTIFY;
-        append(body(), append(div, makeEl($label)));
+        div = /**@type{HTMLDivElement}*/ (makeEl("div", ["zr_nt"]));
+        div.id = "zr_nt";
+        append(body(), append(div, makeEl("label")));
     }
-    div[$style][$backgroundColor] = color;
+    div.style.backgroundColor = color;
     var label = /**@type{!HTMLLabelElement}*/ (children(div)[0]);
     setInnerText(label, msg);
     var opac  = 0.6;
@@ -2292,7 +2285,7 @@ function showNotification(msg, color) {
  *  @return {!boolean}
  */
 function undef(typeStr) {
-    return typeStr == $undefined;
+    return typeStr == "undefined";
 }                                                                        //undef
 
 /** url: Builds a path from the specified part(s).
@@ -2303,39 +2296,39 @@ function undef(typeStr) {
  *  @return {!string}
  */
 function url(parts) {
-    var ret = $BLANK;
+    var ret = "";
     for (var i = 0, end = arguments.length; i < end; i++) {
         var arg = /**@type{(string|Array|Arguments)}*/ (arguments[i]);
-        var s = $BLANK;
+        var s = "";
         if (isArray(arg)) {
             for (var j = 0; j < arg.length; j++) {
                 if (j > 0) {
-                    s += $SLASH;
+                    s += "/";
                 }
                 s += trim(trim(trim(
-                        /**@type{string}*/ (arg[j])), $HASH), $SLASH);
+                        /**@type{string}*/ (arg[j])), "#"), "/");
             }
-        } else if (typeof arg == $object && arg.length) {
+        } else if (typeof arg == "object" && arg.length) {
             s = url(Array.prototype.slice.call(arg));
-        } else if (typeof arg == $string) {
-            s = trim(trim(trim(/**@type{string}*/ (arg)), $HASH), $SLASH);
+        } else if (typeof arg == "string") {
+            s = trim(trim(trim(/**@type{string}*/ (arg)), "#"), "/");
         }
         if (s.length == 0) {
             continue;
         }
-        if (i > 0 && s.charAt(0) != $SLASH) {
-            ret += $SLASH + s;
+        if (i > 0 && s.charAt(0) != "/") {
+            ret += "/" + s;
         } else {
             ret += s;
         }
     }
     // add leading slash
-    if (ret.charAt(0) != $SLASH &&
+    if (ret.charAt(0) != "/" &&
         ret.substr(0, 5) != "http:" && ret.substr(0, 5) != "https:") {
-            ret = $SLASH + ret;
+            ret = "/" + ret;
     }
     // trim trailing slash
-    if (ret.charAt(ret.length - 1) == $SLASH) {
+    if (ret.charAt(ret.length - 1) == "/") {
         ret = ret.substr(0, ret.length - 1);
     }
     return ret;
@@ -2350,15 +2343,15 @@ function url(parts) {
  *  @return {!string}
  */
 function urlArg(argName, url) {
-    argName = trim(argName, $EQUAL) + $EQUAL;
-    var parts = S(location.href).split($SLASH);
+    argName = trim(argName, "=") + "=";
+    var parts = S(location.href).split("/");
     for (var i = parts.length - 1; i >= 0; i--) {
         var arg = parts[i];
         if (begins(arg, argName)) {
             return arg.substr(argName.length);
         }
     }
-    return $BLANK;
+    return "";
 }                                                                       //urlArg
 
 /** versionIE: Returns the Internet Explorer version.
@@ -2369,7 +2362,7 @@ function urlArg(argName, url) {
  */
 function versionIE() {
     var agent = navigator.userAgent.toLowerCase();
-    return !/msie/.test(agent) ? 0 : parseInt(agent.split($msie)[1], 10);
+    return !/msie/.test(agent) ? 0 : parseInt(agent.split("msie")[1], 10);
 }                                                                    //versionIE
 
 // -----------------------------------------------------------------------------
@@ -2397,25 +2390,25 @@ function versionIE() {
  */
 function N(val) {
     var type           = typeof val;
-    var groupSeparator = $COMMA;
+    var groupSeparator = ",";
     var defaultVal     = 0;
-    if (type == $number) {
+    if (type == "number") {
         return /**@type{number}*/ (val);
     }
-    if (type == $string) {
+    if (type == "string") {
         val = trim(S(val));
         var len = val.length;
         if (len == 0) {
             return defaultVal;
         }
-        var isPercent = val.substr(len - 1, 1) == $PERCENT;
+        var isPercent = val.substr(len - 1, 1) == "%";
         if (isPercent) {
             val = trim(val.substr(0, len - 1));
             len = val.length;
         }
         var i  = 0;
         var ch = val.charAt(i);
-        if (ch == $MINUS || ch == $PLUS) {
+        if (ch == "-" || ch == "+") {
             i++;
         }
         if (!isDigitOrDot(val.charAt(i)) ||
@@ -2425,7 +2418,7 @@ function N(val) {
         var prevDigit;
         while (i < len) {
             ch = val.charAt(i++);
-            if (ch == $DOT) {
+            if (ch == ".") {
                 var hasDot;
                 if (hasDot) {
                     return defaultVal;
@@ -2446,7 +2439,7 @@ function N(val) {
             }
         }
         if (contains(val, groupSeparator)) {
-            val = replace(val, groupSeparator, $BLANK);
+            val = replace(val, groupSeparator, "");
         }
         val = parseFloat(val);
         if (isNaN(val)) {
@@ -2458,19 +2451,19 @@ function N(val) {
         return val;
     }
     return defaultVal;
-    /** isDigit: __
+    /** isDigit: returns true if character 'ch' is a decimal digit
      *  @param {string} ch
      *  @return {boolean}
      */
     function isDigit(ch) {
-        return ch >= $0 && ch <= $9;
+        return ch >= "0" && ch <= "9";
     }
-    /** isDigitOrDot: __
+    /** isDigitOrDot: returns true if 'ch' is a decimal digit or '.'
      *  @param {string} ch
      *  @return {boolean}
      */
     function isDigitOrDot(ch) {
-        return isDigit(ch) || ch == $DOT;
+        return isDigit(ch) || ch == ".";
     }
 }                                                                            //N
 
@@ -2492,7 +2485,7 @@ function formatNumber(num, decimalPlaces) {
      *  @return {string}
      */
     function sign(s) {
-        return contains(s, $MINUS) ? $MINUS : $BLANK;
+        return contains(s, "-") ? "-" : "";
     }
     /** integerPart: __
      *  @param {Array<string>} ar
@@ -2501,10 +2494,10 @@ function formatNumber(num, decimalPlaces) {
     function integerPart(ar) {
         return until(   ar,
                         /** @param {string} ch */
-                        function(ch) { //anonymous
-                            return ch == $DOT;
+                        function(ch) {
+                            return ch == ".";
                         }
-                    ).join($BLANK);
+                    ).join("");
     }
     /** decimalPart: __
      *  @param {string} s
@@ -2513,14 +2506,14 @@ function formatNumber(num, decimalPlaces) {
      */
     function decimalPart(s, dp) {
         if (dp == 0) {
-            return $BLANK;
+            return "";
         }
-        var pos = s.indexOf($DOT);
-        s = pos < 0  ? (dp > 0 ? $DOT : $BLANK) :
+        var pos = s.indexOf(".");
+        s = pos < 0  ? (dp > 0 ? "." : "") :
               dp == -1 ? s.substr(pos) :
                          s.substr(pos, dp + 1);
         while (s.length < dp + 1) {
-            s += $0;
+            s += "0";
         }
         return s;
     }
@@ -2540,12 +2533,12 @@ function formatNumber(num, decimalPlaces) {
     }
     // extract numeric characters from argument
     num = S(num);
-    var digits = filter(    num.split($BLANK),
+    var digits = filter(    num.split(""),
                             /** @param {string} ch */
-                            function(ch) { //anonymous
-                                return (ch >= $0 && ch <= $9) || ch == $DOT;
+                            function(ch) {
+                                return (ch >= "0" && ch <= "9") || ch == ".";
                             });
-    return sign(num) + group([integerPart(digits)]).join($COMMA) +
+    return sign(num) + group([integerPart(digits)]).join(",") +
            decimalPart(num, N(decimalPlaces));
 }                                                                 //formatNumber
 
@@ -2560,38 +2553,38 @@ function formatNumber(num, decimalPlaces) {
  */
 function isNumber(val) {
     var type = typeof val;
-    if (type == $number) {
+    if (type == "number") {
         return !isNaN(val) && val != Infinity && val != -Infinity;
     }
-    if (type == $string) {
+    if (type == "string") {
         val = trim(S(val));
-        var groupSeparator  = groupSeparator || $COMMA;
-        var decimalPoint    = decimalPoint   || $DOT;
-        var whiteSpaces     = whiteSpaces    || $SPACE;
+        var groupSeparator  = groupSeparator || ",";
+        var decimalPoint    = decimalPoint   || ".";
+        var whiteSpaces     = whiteSpaces    || " ";
         var hasDecimalPoint = false;
         var hasDigit        = false;
         var i               = 0;
         var len             = val.length;
-        var ch              = $BLANK;
-        var prevSep         = $BLANK;
+        var ch              = "";
+        var prevSep         = "";
         if (len < 1) {
             return false;
         }
         // ignore prefixed sign
         ch = val.charAt(0);
-        if (ch == $PLUS || ch == $MINUS) {
+        if (ch == "+" || ch == "-") {
             i++;
         }
         // get suffixed percent mark
         if (len > 1) {
             ch = val.charAt(len - 1);
-            if (ch == $PERCENT) {
+            if (ch == "%") {
                 len--;
             }
         }
         while (i < len) {
             ch = val.charAt(i++);
-            if (ch >= $0 && ch <= $9) {
+            if (ch >= "0" && ch <= "9") {
                 hasDigit = true;
             } else if (ch == groupSeparator) {
                 // two consecutive group separators make string non-numeric
@@ -2639,7 +2632,7 @@ function S(values) {
         }
         return ("" + values).substr(0);
     default:
-        var ret = $BLANK;
+        var ret = "";
         for (var i = 0, end = arguments.length; i < end; i++) {
             var v = /**@type{string}*/ (arguments[i]);
             if (v === null || typeof v == "undefined") {
@@ -2750,11 +2743,11 @@ function extractStrings(args) {
     for (var i = 0, count = arguments.length; i < count; i++) {
         /**@type{*}*/
         var val = arguments[i];
-        if (val == null) {
+        if (val === null) {
             continue;
         }
         var t = typeof val;
-        if (t == $string) {
+        if (t == "string") {
             ret.push(val);
         } else if (isArray(val)) {
             ret = ret.concat(extractStrings.apply(  //TODO: avoid apply();
@@ -2775,10 +2768,10 @@ function extractStrings(args) {
 function isString(val) {
     var type = typeof val;
     // this check is needed because typeof null is 'object'
-    if (type == $undefined || val === null) {
+    if (type == "undefined" || val === null) {
         return false;
     }
-    return type == $string;
+    return type == "string";
 }                                                                     //isString
 
 /** json: Converts the given object 'ob' to its JSON representation.
@@ -2790,36 +2783,36 @@ function isString(val) {
  */
 function json(ob, optLineBreaks) {
     if (undef(typeof ob) || ob === null) {
-        return $BLANK;
+        return "";
     }
     if (undef(typeof optLineBreaks)) {
         optLineBreaks = false;
     }
     var isArr = isArray(ob);
-    var ret   = (isArr ? $OBRACE : $OBRACKET);
+    var ret   = (isArr ? "[" : "{");
     var last  = -1;
     var i     = 0;
     var propName;
     if (optLineBreaks) {
-        ret += $LF;
+        ret += "\n";
     }
     for (propName in ob) {
         last++;
     }
     for (propName in ob) {
         var /**@type{Object}*/ val = ob[propName];
-        propName = $DQ + propName + $DQ + $COLON + $SPACE;
+        propName = "\"" + propName + "\"" + ":" + " ";
         if (val === null) {
-            ret += propName + $null;
+            ret += propName + "null";
         } else {
             switch (typeof val) {
-            case $string:
+            case "string":
                 if (!isArr) {
                     ret += propName;
                 }
-                ret += $DQ + escape(S(val)) + $DQ;
+                ret += "\"" + escape(S(val)) + "\"";
                 break;
-            case $object:
+            case "object":
                 if (isArr) {
                     ret += json(val, optLineBreaks);  // array
                 } else {
@@ -2835,16 +2828,16 @@ function json(ob, optLineBreaks) {
             }
         }
         if (i < last) {
-            ret += $COMMA;
+            ret += ",";
         }
         if (optLineBreaks) {
-            ret += $LF;
+            ret += "\n";
         }
         i++;
     }
-    ret += (isArr ? $CBRACE : $CBRACKET);
+    ret += (isArr ? "]" : "}");
     if (optLineBreaks) {
-        ret += $LF;
+        ret += "\n";
     }
     return ret;
 }                                                                         //json
@@ -2858,18 +2851,18 @@ function json(ob, optLineBreaks) {
  *  @return {!number}
  */
 function lineCount(s) {
-    if (typeof s != $string) {
+    if (typeof s != "string") {
         s = S(s);
     }
     if (s.length == 0) {
         return 0;
     }
     var lineCount = 1;
-    var pos = s.indexOf($LF);
+    var pos = s.indexOf("\n");
     while (pos > -1) {
         lineCount++;
         s = s.substr(pos + 1);
-        pos = s.indexOf($LF);
+        pos = s.indexOf("\n");
     }
     return lineCount;
 }                                                                    //lineCount
@@ -2877,24 +2870,24 @@ function lineCount(s) {
 var internalParseJSON =
     /**@type{function():(function(string):Object)}*/ (function() {
     var /**@type{number}*/ at = -1,      // index of the current character
-        /**@type{string}*/ ch = $BLANK,  // current character
-        /**@type{string}*/ text = $BLANK,
+        /**@type{string}*/ ch = "",  // current character
+        /**@type{string}*/ text = "",
         escape = {
-            "\"": $DQ,
+            "\"": "\"",
             "\\": "\\",
             "/": "/",
             b: "\b",
             f: "\f",
-            n: $LF,
+            n: "\n",
             r: "\r",
-            t: $TAB,
+            t: "\t",
         }
     /** raiseError: Raises an error.
      *  @param {string} msg
      */
     function raiseError(msg) {
-        console.log($syntax + $SPACE + $error + $COLON, msg, at, text);
-        throw new Error($syntax + $SPACE + $error + $COLON + msg);
+        console.log("syntax" + " " + "error" + ":", msg, at, text);
+        throw new Error("syntax" + " " + "error" + ":" + msg);
     }
     /** getNext: __
      *  @param {string=} matchCh
@@ -2905,7 +2898,7 @@ var internalParseJSON =
         // verify that it matches the current character.
         if (matchCh && matchCh !== ch) {
             raiseError("Expected '" + matchCh + "' instead of '" + ch + "'");
-            return $BLANK;
+            return "";
         }
         // Get the next character. When there are no more characters,
         // return the empty string.
@@ -2917,36 +2910,36 @@ var internalParseJSON =
      *  @return {!number}
      */
     function readNumber() {
-        var s = $BLANK;
-        if (ch === $MINUS) {
-            s = $MINUS;
-            getNext($MINUS);
+        var s = "";
+        if (ch === "-") {
+            s = "-";
+            getNext("-");
         }
-        while (ch >= $0 && ch <= $9) {
+        while (ch >= "0" && ch <= "9") {
             s += ch;
             getNext();
         }
-        if (ch === $DOT) {
-            s += $DOT;
-            while (getNext() && ch >= $0 && ch <= $9) {
+        if (ch === ".") {
+            s += ".";
+            while (getNext() && ch >= "0" && ch <= "9") {
                 s += ch;
             }
         }
         if (ch === "e" || ch === "E") {
             s += ch;
             getNext();
-            if (ch === $MINUS || ch === $PLUS) {
+            if (ch === "-" || ch === "+") {
                 s += ch;
                 getNext();
             }
-            while (ch >= $0 && ch <= $9) {
+            while (ch >= "0" && ch <= "9") {
                 s += ch;
                 getNext();
             }
         }
         var n = +s;
         if (!isFinite(n)) {
-            raiseError($invalid + $SPACE + $number);
+            raiseError("invalid" + " " + "number");
             return NaN;
         }
         return n;
@@ -2956,12 +2949,12 @@ var internalParseJSON =
      */
     function readString() {
         /**@type{string}*/
-        var ret = $BLANK;
+        var ret = "";
         //
         // when parsing for string values, we must look for " and \ characters.
-        if (ch === $DQ) {
+        if (ch === "\"") {
             while (getNext()) {
-                if (ch === $DQ) {
+                if (ch === "\"") {
                     getNext();
                     return ret;
                 }
@@ -2977,7 +2970,7 @@ var internalParseJSON =
                             uffff = uffff * 16 + hex;
                         }
                         ret += String.fromCharCode(uffff);
-                    } else if (typeof escape[ch] === $string) {
+                    } else if (typeof escape[ch] === "string") {
                         ret += /**@type{string}*/ (escape[ch]);
                     } else {
                         break;
@@ -2987,11 +2980,11 @@ var internalParseJSON =
                 }
             }
         }
-        raiseError($invalid + $SPACE + $string);
-        return $BLANK;
+        raiseError("invalid" + " " + "string");
+        return "";
     }
     function skipSpaces() {
-        while (ch && ch <= $SPACE) {
+        while (ch && ch <= " ") {
             getNext();
         }
     }
@@ -3029,25 +3022,25 @@ var internalParseJSON =
      */
     function readArray() {
         var ar = [];
-        if (ch === $OBRACE) {
-            getNext($OBRACE);
+        if (ch === "[") {
+            getNext("[");
             skipSpaces();
-            if (ch === $CBRACE) {
-                getNext($CBRACE);
+            if (ch === "]") {
+                getNext("]");
                 return ar;  // empty array
             }
             while (ch) {
                 ar.push(getValue());
                 skipSpaces();
-                if (ch === $CBRACE) {
-                    getNext($CBRACE);
+                if (ch === "]") {
+                    getNext("]");
                     return ar;
                 }
-                getNext($COMMA);
+                getNext(",");
                 skipSpaces();
             }
         }
-        raiseError($invalid + $SPACE + $array);
+        raiseError("invalid" + " " + "array");
         return [];
     }
     /** readObject: Parses an object value.
@@ -3056,32 +3049,32 @@ var internalParseJSON =
     function readObject() {
         var key;
         var ob = {};
-        if (ch === $OBRACKET) {
-            getNext($OBRACKET);
+        if (ch === "{") {
+            getNext("{");
             skipSpaces();
-            if (ch === $CBRACKET) {
-                getNext($CBRACKET);
+            if (ch === "}") {
+                getNext("}");
                 return {};
             }
             while (ch) {
                 key = readString();
                 skipSpaces();
-                getNext($COLON);
+                getNext(":");
                 if (/**@type{boolean}*/
                     (/**@type{Object}*/ (Object).hasOwnProperty.call(ob, key))) {
                     raiseError("duplicate key '" + key + "'");
                 }
                 ob[key] = getValue();
                 skipSpaces();
-                if (ch === $CBRACKET) {
-                    getNext($CBRACKET);
+                if (ch === "}") {
+                    getNext("}");
                     return ob;
                 }
-                getNext($COMMA);
+                getNext(",");
                 skipSpaces();
             }
         }
-        raiseError($invalid + $SPACE + $object);
+        raiseError("invalid" + " " + "object");
         return {};
     }
     /** getValue: Parses a JSON object, array, string or number.
@@ -3090,16 +3083,16 @@ var internalParseJSON =
     function getValue() {
         skipSpaces();
         switch (ch) {
-        case $OBRACKET:
+        case "{":
             return readObject();
-        case $OBRACE:
+        case "[":
             return readArray();
-        case $DQ:
+        case "\"":
             return readString();
-        case $MINUS:
+        case "-":
             return readNumber();
         default:
-            return (ch >= $0 && ch <= $9) ? readNumber() : readWord();
+            return (ch >= "0" && ch <= "9") ? readNumber() : readWord();
         }
     }
     // Return the internalParseJSON function. It will have access
@@ -3113,11 +3106,11 @@ var internalParseJSON =
         try {
             text = s;
             at   = 0;
-            ch   = $SPACE;
+            ch   = " ";
             var ret = getValue();
             skipSpaces();
             if (ch) {
-                raiseError($syntax + $SPACE + $error);
+                raiseError("syntax" + " " + "error");
             }
             return /**@type{Object}*/ (ret);
         } catch(ex) {
@@ -3134,7 +3127,7 @@ var internalParseJSON =
  */
 function parseJSON(s) {
     if (s.length == 0) {
-        err(0xE48BF4);  // parseJSON(): blank string, returning empty object
+        err(0xE48BF4);      // parseJSON(): blank string, returning empty object
         return {};
     }
     /*
@@ -3143,14 +3136,14 @@ function parseJSON(s) {
     var ret = {};
     try {
         // modern browsers have a built-in JSON parser
-        if (typeof JSON != $undefined) {
+        if (typeof JSON != "undefined") {
             ret = /**@type{!Object}*/ (JSON.parse(s));
         // older browsers (including IE8 on Windows 7) don't have JSON
         } else {
             ret = /**@type{Object}*/ (internalParseJSON(s));
         }
     } catch(ex) {
-        err(0xE186F1, s);  // parseJSON(): failed parsing JSON
+        err(0xE186F1, s);                    // parseJSON(): failed parsing JSON
     }
     /*
     console.log("parseJSON(): output", ret);
@@ -3168,7 +3161,7 @@ function parseJSON(s) {
  */
 function prefix(s, count) {
     var len = s.length;
-    return count < 1   ? $BLANK :
+    return count < 1   ? "" :
            count > len ? s    :
            s.substr(0, len);
 }                                                                       //prefix
@@ -3199,17 +3192,17 @@ function repeat(s, count) {
  */
 function replace(s, find, repl) {
     // return blank if 's' is blank
-    if (s === null || s == $BLANK) {
-        return $BLANK;
+    if (s === null || s == "") {
+        return "";
     }
     // cast all arguments to strings
-    if (typeof s != $string) {
+    if (typeof s != "string") {
         s = S(s);
     }
-    if (typeof find != $string) {
+    if (typeof find != "string") {
         find = S(find);
     }
-    if (typeof repl != $string) {
+    if (typeof repl != "string") {
         repl = S(repl);
     }
     // return 's' if 'repl' is blank
@@ -3217,7 +3210,7 @@ function replace(s, find, repl) {
     if (findLen == 0) {
         return s;
     }
-    var ret     = $BLANK;
+    var ret     = "";
     var prevPos = 0;
     while (true) {
         var pos = s.indexOf(find, prevPos);
@@ -3243,7 +3236,7 @@ function replace(s, find, repl) {
  */
 function suffix(s, count) {
     var len = s.length;
-    return count < 1   ? $BLANK :
+    return count < 1   ? "" :
            count > len ? s    :
            s.slice(len - count);
 }                                                                       //suffix
@@ -3306,7 +3299,7 @@ function trim(s, trimStrings) {
     } while (nend > 0);
     nend++;
     if (begin > nend) {
-        return $BLANK;
+        return "";
     }
     return s.slice(begin, nend);
 }                                                                         //trim
@@ -3324,7 +3317,7 @@ function trim(s, trimStrings) {
  *  @return {!string}
  */
 function height(el, val, unit) {
-    return unitProp($height, el, val, unit);
+    return unitProp("height", el, val, unit);
 }                                                                       //height
 
 /** left: Sets/returns the 'left'
@@ -3337,7 +3330,7 @@ function height(el, val, unit) {
  *  @return {!string}
  */
 function left(el, val, unit) {
-    return unitProp($left, el, val, unit);
+    return unitProp("left", el, val, unit);
 }                                                                         //left
 
 /** opacity: Sets/returns the 'opacity'
@@ -3347,22 +3340,22 @@ function left(el, val, unit) {
  *  @param {(Element|HTMLElement)} el
  *  @param {number=} val
  *
- *  @return {!number}
+ *  @return {(!number|!string)}
  */
 function opacity(el, val) {
-    if (!contains(S(navigator[$userAgent]).toLowerCase(), $msie)) {
+    if (!contains(S(navigator.userAgent).toLowerCase(), "msie")) {
         if (def(typeof val)) {
-            el[$style][$opacity] = val;
+            el.style.opacity = N(val);
         }
-        return el[$style][$opacity];
+        return el.style.opacity;
     }
     // for Internet Explorer:
     if (def(typeof val)) {
-        el[$style][$filter] = $alpha_opacity_ + Math.round(val * 100) + $CPAREN;
+        el.style.filter = "alpha(opacity=" + Math.round(val * 100) + ")";
     }
-    var s = S(el[$style][$filter]);
-    if (contains(s, $alpha_opacity_)) {
-        s = s.substr(s.indexOf($alpha_opacity_));
+    var s = S(el[("style")][("filter")]);
+    if (contains(s, "alpha(opacity=")) {
+        s = s.substr(s.indexOf("alpha(opacity="));
         s = s.substr(0, s.length - 1);
     }
     return N(s);
@@ -3378,9 +3371,9 @@ function opacity(el, val) {
  */
 function position(el, val) {
     if (def(typeof val)) {
-        el[$style][$position] = val;
+        el.style.position = S(val);
     }
-    return S(el[$style][$position]);
+    return S(el.style.position);
 }                                                                     //position
 
 /** mTop: Sets/returns the 'top'
@@ -3393,7 +3386,7 @@ function position(el, val) {
  *  @return {!string}
  */
 function mTop(el, val, unit) {
-    return unitProp($top, el, val, unit);
+    return unitProp("top", el, val, unit);
 }                                                                         //mTop
 
 /** visibility: Sets/returns the 'visibility'
@@ -3406,22 +3399,22 @@ function mTop(el, val, unit) {
  */
 function visibility(el, val) {
     if (el === null) {
-        return $BLANK;
+        return "";
     }
-    if (typeof val == $boolean) {
-        el[$style][$visibility] = val ? $visible : $hidden;
-    } else if (typeof val == $string) {
-        if (val == $visible) {
-            el[$style][$visibility] = $visible;
-        } else if (val == $hidden) {
-            el[$style][$visibility] = $hidden;
+    if (typeof val == "boolean") {
+        el.style.visibility = val ? "visible" : "hidden";
+    } else if (typeof val == "string") {
+        if (val == "visible") {
+            el.style.visibility = "visible";
+        } else if (val == "hidden") {
+            el.style.visibility = "hidden";
         } else {
-            err(0xE55EA7);  // visibility(): 'val' is not 'visible' or 'hidden'
+            err(0xE55EA7);   // visibility(): 'val' is not 'visible' or 'hidden'
         }
     } else {
-        err(0xE6B2A9);  // visibility(): 'val' is not a boolean or string
+        err(0xE6B2A9);         // visibility(): 'val' is not a boolean or string
     }
-    return el[$style][$visibility];
+    return el.style.visibility;
 }                                                                   //visibility
 
 /** width: Sets/returns the 'width'
@@ -3434,7 +3427,7 @@ function visibility(el, val) {
  *  @return {!string}
  */
 function width(el, val, unit) {
-    return unitProp($width, el, val, unit);
+    return unitProp("width", el, val, unit);
 }                                                                        //width
 
 /** unitProp: Sets/returns a unit
@@ -3450,15 +3443,15 @@ function width(el, val, unit) {
  *  @return {string}
  */
 function unitProp(prop, el, val, unit) {
-    unit = undef(typeof unit) ? $px : S(unit);
-    if (typeof val == $number) {
-        el[$style][prop] = S(val, unit);
-    } else if (typeof val == $string) {
+    unit = undef(typeof unit) ? "px" : S(unit);
+    if (typeof val == "number") {
+        el.style[prop] = S(val, unit);
+    } else if (typeof val == "string") {
         if (unit.length > 0) {
-            el[$style][prop] = S(val, unit);
+            el.style[prop] = S(val, unit);
         }
     }
-    return S(el[$style][prop]);
+    return S(el.style[prop]);
 }                                                                     //unitProp
 
 // -----------------------------------------------------------------------------
@@ -3472,23 +3465,23 @@ var fadeScreen = /**@type{function():function(boolean)}*/ (function() {
     return (
     /** @param {boolean} show */
     function(show) {
-        var div   = selID($ZR_FADER);
+        var div   = selID("zr_fa");
         var isNew = div === null;
         if (show && isNew) {
             div = makeFullscreenDiv();
-            div[$id] = $ZR_FADER;
+            div.id = "zr_fa";
         }
         if (show) {
-            div[$style][$background] = $Black;
+            div.style.background = "Black";
             opacity(div, 0);
             visibility(div, true);
             if (isNew) {
                 body().appendChild(div);
             }
-            transitionStyle(div, $opacity, 0.3, 1000);
+            transitionStyle(div, "opacity", 0.3, 1000);
         }
         if (!show) {
-            transitionStyle(div, $opacity, 0, 1000, removeDiv);
+            transitionStyle(div, "opacity", 0, 1000, removeDiv);
         }
     });
     /** @param {HTMLElement} el */
@@ -3507,11 +3500,11 @@ var fadeScreen = /**@type{function():function(boolean)}*/ (function() {
  */
 function transitionStyle(el, property, endValue, durationMs, whenDone) {
     if (el === null) {
-        err(0xE926F8);  // transitionStyle(): arg 'el' is null
+        err(0xE926F8);                    // transitionStyle(): arg 'el' is null
         return;
     }
     /**@type{!number}*/
-    var value   = N((el)[$style][property]);
+    var value   = N((el).style[property]);
     var step    = (endValue - value) / (durationMs / 50);
     var elapsed = 0;
     var timer   = setInterval(updateTimer, 50);
@@ -3524,7 +3517,7 @@ function transitionStyle(el, property, endValue, durationMs, whenDone) {
             value = endValue;
             clearInterval(timer);
         }
-        el[$style][property] = value;
+        el.style[property] = S(value);
         if (isDone && isFn(whenDone)) {
             whenDone(el);
         }
