@@ -1,6 +1,6 @@
 // -----------------------------------------------------------------------------
 // (c) balarabe@protonmail.com                                      License: MIT
-// :v: 2018-02-26 01:33:28 58CFFB                           [zr/js/functions.js]
+// :v: 2018-02-26 23:07:28 D4171F                           [zr/js/functions.js]
 // -----------------------------------------------------------------------------
 
 // JavaScript standard: ES3
@@ -235,9 +235,9 @@ function disableSelect(el) {
 // -----------------------------------------------------------------------------
 // # Date Functions
 
-/** formatDate: Returns a formatted date string from the specified date,
- *  or year, month and date. args is either a single Date object,
- *  or an array of three integers following 'format',
+/** formatDate: Returns a formatted date string from the specified
+ *  date, or year, month and date. args is either a single Date
+ *  object, or an array of three integers following 'format',
  *  for year, month and day number.
  *
  *  @param {string} format
@@ -259,9 +259,11 @@ function formatDate(format, args) {
     var yr  = isD ? args.getFullYear()  : N(args[0]);
     var mn  = isD ? args.getMonth() + 1 : N(args[1]);
     var dy  = isD ? args.getDate()      : N(args[2]);
+    //
     yr = isNumber(yr) && yr >= 1900 && yr <= 9999 ? yr : NaN;
     mn = isNumber(mn) && mn >= 1    && mn <= 12   ? mn : NaN;
     dy = isNumber(dy) && dy >= 1    && dy <= 31   ? dy : NaN;
+    //
     var formats = [
             ["yyyy",    function() {
                             return S(yr);
@@ -286,7 +288,8 @@ function formatDate(format, args) {
                         }],
             ["d",       function() {
                             return S(dy);
-                        }]];
+                        }],
+    ];
     var ret = format;
     forEach (formats, formatItem);
             /** @param {Array} ar */
