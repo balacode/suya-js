@@ -1,6 +1,6 @@
 @rem  [jscheck.bat]
 @rem
-@rem  Uses the Google Colsure Compiler
+@rem  Uses the Google Closure Compiler
 @rem  to type-check functions.js
 @rem
 @rem  To be able to do this, you have to download
@@ -23,4 +23,4 @@ java -jar closure-compiler.jar ^
 
 type jscheck.txt
 
-@ rem end
+@rem end

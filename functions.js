@@ -1,7 +1,9 @@
 // -----------------------------------------------------------------------------
 // (c) balarabe@protonmail.com                                      License: MIT
-// :v: 2018-02-25 15:10:49 D80551                           [zr/js/functions.js]
+// :v: 2018-02-26 01:33:28 58CFFB                           [zr/js/functions.js]
 // -----------------------------------------------------------------------------
+
+// JavaScript standard: ES3
 
 // # Caret Functions
 // # Date Functions
@@ -137,24 +139,13 @@
 //   left(el, val, unit)
 //   opacity(el, val)
 //   position(el, val)
-//   mTop(el, val, unit)
 //   visibility(el, val)
 //   width(el, val, unit)
+//   ytop(el, val, unit)
 //
 // # UI Effects Functions
 //   fadeScreen(show)
 //   transitionStyle(el, property, endValue, durationMs, whenDone)
-
-// -----------------------------------------------------------------------------
-
-/*
-    Note: This file should not be included in HTML pages directly.
-    It is part of an assembly of files making up the Zirconium framework.
-    If you want to use just this file, enclose it in a mudule:
-    Place it between the contents of module_begin.js and module_end.js.
-
-    module_begin.js also specifies 'use_strict';
-*/
 
 // -----------------------------------------------------------------------------
 // # Caret Functions
@@ -262,8 +253,7 @@ function formatDate(format, args) {
     var isD = isDate(args);
     var isN = isArray(args) && args.length == 3;
     if (!isD && !isN) {
-        err(0xEA76F5,               // formatDate(): 'args' not a date or number
-            typeof args);
+        err(0xEA76F5, typeof args); // formatDate(): 'args' not a date or number
         return "";
     }
     var yr  = isD ? args.getFullYear()  : N(args[0]);
@@ -273,30 +263,30 @@ function formatDate(format, args) {
     mn = isNumber(mn) && mn >= 1    && mn <= 12   ? mn : NaN;
     dy = isNumber(dy) && dy >= 1    && dy <= 31   ? dy : NaN;
     var formats = [
-            ["yyyy", function() {
-                        return S(yr);
-                    }],
-            ["yy",   function() {
-                        return suffix(S(yr), 2);
-                    }],
-            ["mmmm", function() {
-                        return monthNameEN(mn);
-                    }],
-            ["mmm",  function() {
-                        return monthNameEN(mn).substr(0, 3);
-                    }],
-            ["mm",   function() {
-                        return mn < 10 ? "0" + S(mn) : S(mn);
-                    }],
-            ["m",    function() {
-                        return S(mn);
-                    }],
-            ["dd",   function() {
-                        return dy < 10 ? "0" + S(dy) : S(dy);
-                    }],
-            ["d",    function() {
-                        return S(dy);
-                    }]];
+            ["yyyy",    function() {
+                            return S(yr);
+                        }],
+            ["yy",      function() {
+                            return suffix(S(yr), 2);
+                        }],
+            ["mmmm",    function() {
+                            return monthNameEN(mn);
+                        }],
+            ["mmm",     function() {
+                            return monthNameEN(mn).substr(0, 3);
+                        }],
+            ["mm",      function() {
+                            return mn < 10 ? "0" + S(mn) : S(mn);
+                        }],
+            ["m",       function() {
+                            return S(mn);
+                        }],
+            ["dd",      function() {
+                            return dy < 10 ? "0" + S(dy) : S(dy);
+                        }],
+            ["d",       function() {
+                            return S(dy);
+                        }]];
     var ret = format;
     forEach (formats, formatItem);
             /** @param {Array} ar */
@@ -413,8 +403,7 @@ function year(num) {
  */
 function append(container, children) {
     if (!isObject(container)) {
-        err(0xE9C294,              // append(): arg 'container' is not an object
-            container);
+        err(0xE9C294, container);  // append(): arg 'container' is not an object
         return null;
     }
     if (children === null || typeof children == "undefined") {
@@ -480,8 +469,7 @@ function children(el, cssSelector) {
                     ret.push(child);
             }
             if (child.childNodes.length > 0) {
-                stack[level] = child;
-                level++;
+                stack[level++] = child;
                 child = /**@type{!HTMLElement}*/ (child.firstChild);
                 continue;
             }
@@ -738,7 +726,7 @@ function makeFullscreenDiv() {
     var div = makeDiv({});
     position(div, "fixed");
     left(div, 0);
-    mTop(div, 0);
+    ytop(div, 0);
     width(div, 100, "%");
     height(div, 100, "%");
     div.style.zIndex = 200;  // must equal @dialog_z_index
@@ -856,6 +844,7 @@ function sel(elemOrSelector, parent) {
         var tag = trim(part[0].join("")).toLowerCase();
         var id  = trim(part[1].join("")).toLowerCase();
         var cls = trim(part[2].join("")).toLowerCase();
+        //
         if (parent.childNodes.length == 0) {
             return returnArray ? [] : null;
         }
@@ -884,8 +873,7 @@ function sel(elemOrSelector, parent) {
                 }
             }
             while (level >= 0 && child.nextSibling === null) {
-                level--;
-                if (level >= 0) {
+                if (--level >= 0) {
                     child = /**@type{!HTMLElement}*/ (stack.pop());
                 } else {
                     break;
@@ -940,6 +928,7 @@ function selID(id, parent) {
 function setClass(state, item, classes) {
     var ob   = /**@type{Object}*/ (item);
     var type = typeof item;
+    //
     // if 'item' is an object, use its className, if string, use it directly
     if (type == "object") {
         /**@type{!string}*/
@@ -950,18 +939,17 @@ function setClass(state, item, classes) {
         err(0xE8E2F2);        // setClass(): arg 'item' not an element or string
         return null;
     }
-    for (var i = 2, count = arguments.length; i < count; i++) {
+    for (var i = 2, endi = arguments.length; i < endi; i++) {
         var arg = /**@type{(string|Array<string>)}*/ (arguments[i]);
         if (typeof arg == "string") {
             alterList(state, S(arg));
         } else if (isArray(arg)) {
             var ar = extractStrings(arg);
-            for (var j = 0, jlen = ar.length; j < jlen; j++) {
+            for (var j = 0, endj = ar.length; j < endj; j++) {
                 alterList(state, S(ar[j]));
             }
         } else if (arg !== null) {
-            err(0xEC3C03,                     // setClass(): wrong argument type
-                typeof arg);
+            err(0xEC3C03, typeof arg);        // setClass(): wrong argument type
         }
     }
     list = trim(list);
@@ -980,8 +968,9 @@ function setClass(state, item, classes) {
      *  @param {!string} className
      */
     function alterList(state, className) {
-        // for debugging:
-        // var oldList = list;
+        /* for debugging:
+        var oldList = list;
+        */
         var lowName = " " + className.toLowerCase() + " ";
         if (state) {
             if (!contains((" " + list.toLowerCase() + " "), lowName)) {
@@ -999,7 +988,7 @@ function setClass(state, item, classes) {
                 }
             } while (i > -1);
         }
-        /*
+        /* for debugging:
         console.log("alterList(", state, className, ")" +
                     " before:", "'"+oldList+"'", " after:", "'"+list+"'");
         */
@@ -1020,7 +1009,7 @@ function setInnerText(el, text) {
     // Firefox 1       no innerText
     //
     if (typeof (el["innerText"]) == "string") {
-        el["innerText"] = text;
+        el.innerText = text;
     } else if (el.childNodes.length != 0 &&
         el.childNodes[el.childNodes.length - 1].nodeType == 3) {
         el.childNodes[0].textContent = text;
@@ -1111,8 +1100,8 @@ function centerInWindow(el) {
     if (left(el) != x + "px") {
         left(el, x);
     }
-    if (mTop(el) != y + "px") {
-        mTop(el, y);
+    if (ytop(el) != y + "px") {
+        ytop(el, y);
     }
 }                                                               //centerInWindow
 
@@ -1222,7 +1211,7 @@ function zIndexMax() {
     if (max < 0) {
         max = 0;
     }
-    return N(max);
+    return max;
 }                                                                    //zIndexMax
 
 // -----------------------------------------------------------------------------
@@ -1304,18 +1293,21 @@ function listen(eventName, callback, elements) {
     for (var i = 0, count = elements.length; i < count; i++) {
         var el = /**@type{HTMLElement}*/
                  (sel(/**@type{(HTMLElement|string)}*/ (elements[i])));
-        if (el !== null) {
-            if (el.addEventListener) {
-                if (eventName.substring(0, 2) == "on") {
-                    eventName = eventName.substring(2);
-                }
-                el.addEventListener(eventName, callback, true);
-            } else if (el.attachEvent) {
-                if (eventName.substring(0, 2) != "on") {
-                    eventName = "on" + eventName;
-                }
-                el.attachEvent(eventName, callback);
+        if (el === null) {
+            continue;
+        }
+        if (el.addEventListener) {
+            if (eventName.substring(0, 2) == "on") {
+                eventName = eventName.substring(2);
             }
+            el.addEventListener(eventName, callback, true);
+            continue;
+        }
+        if (el.attachEvent) {
+            if (eventName.substring(0, 2) != "on") {
+                eventName = "on" + eventName;
+            }
+            el.attachEvent(eventName, callback);
         }
     }
 }                                                                       //listen
@@ -1356,8 +1348,8 @@ function unlisten(eventName, callback, elements) {
  *  the value.
  *
  *  Example:
- *      combine([ ["name",     "Smeagol"], ["nickname", "Gollum"] ],
- *              { "address": "Moria } )
+ *      combine([["name", "Smeagol"], ["nickname", "Gollum"]],
+ *              {"address": "Moria"} )
  *
  *      returns:
  *          {
@@ -1428,6 +1420,9 @@ function combine(objects) {
  *
  *  The predicate function has 3 arguments:
  *  predicateFn(item, index, ar)
+ *  - item is the current item
+ *  - index is the iteration index
+ *  - ar is the entire array
  *
  *  @param {Array} ar
  *  @param {!function(?,number=,Array=):boolean} predicateFn
@@ -1445,16 +1440,12 @@ function every(ar, predicateFn) {
         }
         return false;
     }
-    var count = ar.length;
-    if (count < 1) {
-        return false;
-    }
-    for (var i = 0; i < count; i++) {
+    for (var i = 0, count = ar.length; i < count; i++) {
         if (!(predicateFn)(ar[i], i, ar)) {
             return false;
         }
     }
-    return true;
+    return count >= 1;
 }                                                                        //every
 
 /** filter: Similar to Array.filter().
@@ -1463,6 +1454,9 @@ function every(ar, predicateFn) {
  *
  *  The predicate function has 3 arguments:
  *  predicateFn(item, index, ar)
+ *  - item is the current item
+ *  - index is the iteration index
+ *  - ar is the entire array
  *
  *  @param {Array} ar
  *  @param {!function(?,number=,Array=):boolean} predicateFn
@@ -1481,15 +1475,11 @@ function filter(ar, predicateFn, selectTrue) {
         }
         return null;
     }
-    var count = ar.length;
-    if (count < 1) {
-        return [];
-    }
     if (typeof selectTrue == "undefined") {
         selectTrue = true;
     }
     var ret = [];
-    for (var i = 0; i < count; i++) {
+    for (var i = 0, end = ar.length; i < end; i++) {
         var res = predicateFn(ar[i], i, ar);
         if ((res && selectTrue) || (!res && !selectTrue)) {
             ret.push(ar[i]);
@@ -1504,6 +1494,9 @@ function filter(ar, predicateFn, selectTrue) {
  *
  *  The predicate function has 3 arguments:
  *  predicateFn(item, index, ar)
+ *  - item is the current item
+ *  - index is the iteration index
+ *  - ar is the entire array
  *
  *  @param {Array} ar
  *  @param {!function(?,number=,Array=):boolean} predicateFn
@@ -1521,11 +1514,7 @@ function find(ar, predicateFn) {
         }
         return null;
     }
-    var count = ar.length;
-    if (count < 1) {
-        return null;
-    }
-    for (var i = 0; i < count; i++) {
+    for (var i = 0, end = ar.length; i < end; i++) {
         var itm = /**@type{*}*/ (ar[i]);
         if (predicateFn(itm)) {
             return itm;
@@ -1549,8 +1538,7 @@ function forEach(ar, applyFn) {
     }
     if (!isArray(ar)) {
         if (ar !== null) {
-            err(0xE8AF1D,         // forEach(): arg 'ar' is not an array or null
-                ar);
+            err(0xE8AF1D, ar);    // forEach(): arg 'ar' is not an array or null
         }
         return ar;
     }
@@ -1593,6 +1581,9 @@ function hasProperty(propName, ob) {
  *
  *  The predicate function has 3 arguments:
  *  predicateFn(item, index, ar)
+ *  - item is the current item
+ *  - index is the iteration index
+ *  - ar is the entire array
  *
  *  @param {Array} ar
  *  @param {!function(?,number=,Array=):boolean} predicateFn
@@ -1649,11 +1640,7 @@ function isOneOf(val, ar) {
         }
         return false;
     }
-    var count = ar.length;
-    if (count < 1) {
-        return false;
-    }
-    for (var i = 0; i < count; i++) {
+    for (var i = 0, end = ar.length; i < end; i++) {
         if (val == ar[i]) {
             return true;
         }
@@ -1747,12 +1734,8 @@ function range(ar, first, last) {
         }
         return null;
     }
-    var count = ar.length;
-    if (count < 1) {
-        return [];
-    }
     var ret = [];
-    for (var i = first; i < count && i <= last; i++) {
+    for (var i = first, end = ar.length; i < end && i <= last; i++) {
         ret.push(ar[i]);
     }
     return ret;
@@ -1798,8 +1781,7 @@ function reduce(ar, applyFn, initialVal) {
     var curr = /**@type{*}*/ (ar[i]);
     do {
         prev = applyFn(prev, curr, i, ar);
-        i++;
-        curr = /**@type{*}*/ (ar[i]);
+        curr = /**@type{*}*/ (ar[++i]);
     } while (i < count);
     return prev;
 }                                                                       //reduce
@@ -1810,6 +1792,9 @@ function reduce(ar, applyFn, initialVal) {
  *
  *  The predicate function has 3 arguments:
  *  predicateFn(item, index, ar)
+ *  - item is the current item
+ *  - index is the iteration index
+ *  - ar is the entire array
  *
  *  @param {Array} ar
  *  @param {!function(?,number=,Array=):boolean} predicateFn
@@ -1827,12 +1812,8 @@ function until(ar, predicateFn) {
         }
         return null;
     }
-    var count = ar.length;
-    if (count < 1) {
-        return [];
-    }
     var ret = [];
-    for (var i = 0; i < count; i++) {
+    for (var i = 0, end = ar.length; i < end; i++) {
         if (predicateFn(ar[i], i, ar)) {
             break;
         }
@@ -1876,15 +1857,15 @@ function use(ob, applyFn) {
  *  @param {?string} optPageName
  */
 function backToPage(optPageName) {
-    var pageName = optPageName || "zr_rp";
     if (def(typeof sessionStorage)) {
-        var /**@type{?string}*/ h = sessionStorage[pageName];
-        if (typeof h == "string") {
-            location.href = S(h);
+        var pageName = optPageName || "zr_rp";
+        var /**@type{?string}*/ href = sessionStorage[pageName];
+        if (typeof href == "string") {
+            location.href = S(href);
             return;
         }
     }
-    history.back();  // or window.history.go(-1);
+    history.back();  // another approach: window.history.go(-1);
 }                                                                   //backToPage
 
 /** browserType: Returns the browser type:
@@ -1894,23 +1875,25 @@ function backToPage(optPageName) {
  */
 function browserType() {
     var agent = navigator.userAgent.toLowerCase();
+    //
+    // the more obscure browsers are tested first:
     if (/seamonkey/.test(agent)) {
         return "seamonkey";
+    }
+    if (/opera/.test(agent)) {
+        return "opera";
     }
     if (/firefox/.test(agent)) {
         return "firefox";
     }
-    if (/chrome/.test(agent)) {
-        return "chrome";
-    }
     if (/safari/.test(agent)) {
         return "safari";
     }
+    if (/chrome/.test(agent)) {
+        return "chrome";
+    }
     if (/msie/.test(agent)) {
         return "msie";
-    }
-    if (/opera/.test(agent)) {
-        return "opera";
     }
     return "other";
 }                                                                  //browserType
@@ -1954,13 +1937,14 @@ function err(errorNum, values) {
         for (i = 1, count = arguments.length; i < count; i++) {
             console.log(arguments[i]);
         }
-    } else {
-        for (i = 1, count = arguments.length; i < count; i++) {
-            msg += ' ' + S(arguments[i]);
-        }
-        alert(msg);
+        debugger; // break in err() function
+        return;
     }
-    debugger; // break in err() function
+    // only for ancient browsers:
+    for (i = 1, count = arguments.length; i < count; i++) {
+        msg += ' ' + S(arguments[i]);
+    }
+    alert(msg);
 }                                                                          //err
 
 /** getOn: Reads .zr.setting from an object.
@@ -1975,7 +1959,7 @@ function getOn(ob, name, defaultVal) {
     if (typeof defaultVal == "undefined") {
         defaultVal = null;
     }
-    if (ob            !== null && typeof ob            == "object" &&
+    if (ob             !== null && typeof ob             == "object" &&
         ob["zr"]       !== null && typeof ob["zr"]       == "object" &&
         ob["zr"][name] !== null && typeof ob["zr"][name] != "undefined") {
             return /**@type{*}*/ (ob["zr"][name]);
@@ -2064,7 +2048,7 @@ function httpRequest(method, url, data, callback) {
     }
     // append a timestamp+random string, to guarantee caching is disabled
     var timestamp = "_" + "_" + (new Date()).getTime() + "_" +
-        ("" + Math.random()).substr(2, 4);
+                    ("" + Math.random()).substr(2, 4);
     xhr.open(method, urlStr + "/" + timestamp, true);
     xhr.setRequestHeader("Content-Type",  "application/json");
     xhr.setRequestHeader("Cache-Control", "no-cache");
@@ -2077,20 +2061,22 @@ function httpRequest(method, url, data, callback) {
             case 3:  // interactive
                 break;
             case 4:
-                resp["err"]         = xhr.status == 200 ? 0 : 1;
-                resp.status      = xhr.status;
-                resp["status_text"] = xhr.statusText;
-                resp.text        = xhr.responseText;
+                resp["err"]         = xhr["status"] == 200 ? 0 : 1;
+                resp["status"]      = xhr["status"];
+                resp["status_text"] = xhr["statusText"];
+                resp["text"]        = xhr.responseText;
                 /*
-                console.log("httpReq()", resp["status_text"], ": ", resp.text);
+                console.log("httpReq()",
+                            resp["status_text"], ": ",
+                            resp["text"]);
                 */
                 callback(resp);
                 break;
             default:
                 resp["err"]         = 2;
-                resp.status      = xhr.status;
-                resp["status_text"] = xhr.statusText;
-                resp.text        = "";
+                resp["status"]      = xhr["status"];
+                resp["status_text"] = xhr["statusText"];
+                resp["text"]        = "";
                 xhr.abort();
                 //console.log("httpRequest() -> failed");
                 callback(resp);
@@ -2101,7 +2087,7 @@ function httpRequest(method, url, data, callback) {
         xhr.send(data);
     } catch(ex) {
         resp["err"]         = 3;
-        resp.status      = 0;
+        resp["status"]      = 0;
         resp["status_text"] = "xhr.send() error";
         callback(resp);
     }
@@ -2430,11 +2416,9 @@ function N(val) {
                     return defaultVal;
                 }
                 prevDigit = false;
-            }
-            else if (isDigit(ch)) {
+            } else if (isDigit(ch)) {
                 prevDigit = true;
-            }
-            else {
+            } else {
                 return defaultVal;
             }
         }
@@ -2619,7 +2603,6 @@ function isNumber(val) {
  *  @return {!string}
  */
 function S(values) {
-    // - - - - - - - use string literals - - - - - - -
     switch (arguments.length) {
     case 0:
         return "";
@@ -2646,7 +2629,6 @@ function S(values) {
         }
         return ret;
     }
-    // - - - - - - - use string literals - - - - - - -
 }                                                                            //$
 
 /** begins: Returns true if string 's' begins with 'find'.
@@ -2678,6 +2660,9 @@ function contains(s, find) {
 }                                                                     //contains
 
 /** diff: Levenstein string difference function.
+ *  Returns the difference metric between two strings,
+ *  with identical strings returning a difference of zero.
+ *  see https://en.wikipedia.org/wiki/Levenshtein_distance
  *
  *  @param {string} a
  *  @param {string} b
@@ -2688,6 +2673,9 @@ function diff(a, b) {
     var m = /**@type{Array<Array<number>>}*/ ([]);  // matrix
     if (!(a && b)) {
         return (b || a).length;
+    }
+    if (a == b) {
+        return 0;
     }
     for (var i = 0; i <= b.length; i++) {
         m[i] = [i];
@@ -2746,8 +2734,7 @@ function extractStrings(args) {
         if (val === null) {
             continue;
         }
-        var t = typeof val;
-        if (t == "string") {
+        if (typeof val == "string") {
             ret.push(val);
         } else if (isArray(val)) {
             ret = ret.concat(extractStrings.apply(  //TODO: avoid apply();
@@ -2767,6 +2754,7 @@ function extractStrings(args) {
  */
 function isString(val) {
     var type = typeof val;
+    //
     // this check is needed because typeof null is 'object'
     if (type == "undefined" || val === null) {
         return false;
@@ -2869,8 +2857,8 @@ function lineCount(s) {
 
 var internalParseJSON =
     /**@type{function():(function(string):Object)}*/ (function() {
-    var /**@type{number}*/ at = -1,      // index of the current character
-        /**@type{string}*/ ch = "",  // current character
+    var /**@type{number}*/ at   = -1,      // index of the current character
+        /**@type{string}*/ ch   = "",  // current character
         /**@type{string}*/ text = "",
         escape = {
             "\"": "\"",
@@ -2894,14 +2882,14 @@ var internalParseJSON =
      *  @return {string}
      */
     function getNext(matchCh) {
-        // If a matchCh parameter is provided,
-        // verify that it matches the current character.
+        // if a matchCh parameter is provided, verify
+        // that it matches the current character.
         if (matchCh && matchCh !== ch) {
             raiseError("Expected '" + matchCh + "' instead of '" + ch + "'");
             return "";
         }
-        // Get the next character. When there are no more characters,
-        // return the empty string.
+        // get the next character. when there are no
+        // more characters, return the empty string.
         ch = text.charAt(at);
         at += 1;
         return ch;
@@ -3017,7 +3005,7 @@ var internalParseJSON =
         raiseError("Unexpected '" + ch + "'");
         return null;
     }
-    /** readArray: Parses an array.
+    /** readArray: parses an array
      *  @return {Array}
      */
     function readArray() {
@@ -3040,10 +3028,10 @@ var internalParseJSON =
                 skipSpaces();
             }
         }
-        raiseError("invalid" + " " + "array");
+        raiseError("invalid array");
         return [];
     }
-    /** readObject: Parses an object value.
+    /** readObject: parses an object value
      *  @return {Object}
      */
     function readObject() {
@@ -3077,7 +3065,7 @@ var internalParseJSON =
         raiseError("invalid" + " " + "object");
         return {};
     }
-    /** getValue: Parses a JSON object, array, string or number.
+    /** getValue: parses a JSON object, array, string or number
      *  @return {(Object|Array|string|number|boolean)}
      */
     function getValue() {
@@ -3095,8 +3083,8 @@ var internalParseJSON =
             return (ch >= "0" && ch <= "9") ? readNumber() : readWord();
         }
     }
-    // Return the internalParseJSON function. It will have access
-    // to all of the above functions and variables.
+    // return the internalParseJSON function. it will have
+    // access to all of the above functions and variables.
     return (
     /** parseJSON() signature:
      *  @param {string} s
@@ -3138,6 +3126,7 @@ function parseJSON(s) {
         // modern browsers have a built-in JSON parser
         if (typeof JSON != "undefined") {
             ret = /**@type{!Object}*/ (JSON.parse(s));
+        //
         // older browsers (including IE8 on Windows 7) don't have JSON
         } else {
             ret = /**@type{Object}*/ (internalParseJSON(s));
@@ -3162,7 +3151,7 @@ function parseJSON(s) {
 function prefix(s, count) {
     var len = s.length;
     return count < 1   ? "" :
-           count > len ? s    :
+           count > len ? s :
            s.substr(0, len);
 }                                                                       //prefix
 
@@ -3237,7 +3226,7 @@ function replace(s, find, repl) {
 function suffix(s, count) {
     var len = s.length;
     return count < 1   ? "" :
-           count > len ? s    :
+           count > len ? s :
            s.slice(len - count);
 }                                                                       //suffix
 
@@ -3376,8 +3365,10 @@ function position(el, val) {
     return S(el.style.position);
 }                                                                     //position
 
-/** mTop: Sets/returns the 'top'
+/** ytop: Sets/returns the 'top'
  *  style property of the specified element.
+ *  (renamed to 'ytop' within this module because
+ *  'top' has another definition in Closure Compiler)
  *
  *  @param {(Element|HTMLElement)} el
  *  @param {(string|number)=} val
@@ -3385,9 +3376,9 @@ function position(el, val) {
  *
  *  @return {!string}
  */
-function mTop(el, val, unit) {
+function ytop(el, val, unit) {
     return unitProp("top", el, val, unit);
-}                                                                         //mTop
+}                                                                         //ytop
 
 /** visibility: Sets/returns the 'visibility'
  *  style property of the specified element.
