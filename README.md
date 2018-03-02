@@ -1,5 +1,5 @@
 # suya-js
-Suya.js - A Javascript Library
+Suya.js - A functional / DOM / utility Javascript Library
 
 ## Some features:
 - Functions for functional programming (forEach, map, reduce, etc.)
