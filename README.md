@@ -1,5 +1,5 @@
 # suya-js - A functional / DOM / utility Javascript Library
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
 ## Some features:
 - Functions for functional programming (forEach, map, reduce, etc.)
