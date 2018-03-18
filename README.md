@@ -1,6 +1,6 @@
-# suya-js - A functional / DOM / utility Javascript Library
-Written to avoid using byzantine JS frameworks.
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+# suya-js - A functional / DOM / utility Javascript Library  
+Written to avoid using byzantine JS frameworks.  
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)  
 
 ## Some features:
 - Functions for functional programming (forEach, map, reduce, etc.)
