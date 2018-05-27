@@ -1,6 +1,6 @@
 // -----------------------------------------------------------------------------
 // (c) balarabe@protonmail.com                                      License: MIT
-// :v: 2018-02-26 23:07:28 D4171F                           [zr/js/functions.js]
+// :v: 2018-05-27 19:22:19 EB12B4                                 [functions.js]
 // -----------------------------------------------------------------------------
 
 // JavaScript standard: ES3
@@ -2067,7 +2067,7 @@ function httpRequest(method, url, data, callback) {
                 resp["err"]         = xhr["status"] == 200 ? 0 : 1;
                 resp["status"]      = xhr["status"];
                 resp["status_text"] = xhr["statusText"];
-                resp["text"]        = xhr.responseText;
+                resp["text"]        = xhr["responseText"];
                 /*
                 console.log("httpReq()",
                             resp["status_text"], ": ",
