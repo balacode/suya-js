@@ -1,6 +1,6 @@
 // -----------------------------------------------------------------------------
 // (c) balarabe@protonmail.com                                      License: MIT
-// :v: 2018-05-27 19:24:08 8CEE1E                                 [functions.js]
+// :v: 2018-05-27 19:26:05 0ADB3E                                 [functions.js]
 // -----------------------------------------------------------------------------
 
 // JavaScript standard: ES3
@@ -95,7 +95,7 @@
 //   httpGet(url, callback)
 //   httpPost(url, data, callback)
 //   httpPut(url, data, callback)
-//   httpRequest(method, url, data, callback)
+//   httpRequest(method, urlArg, data, callback)
 //   isArray(ob)
 //   isIE6()
 //   isObject(val)
@@ -2021,20 +2021,17 @@ function httpPut(url, data, callback) {
 /** httpRequest: Sends a HTTP request via XMLHttpRequest.
  *
  *  @param {string} method
- *  @param {(string|Array)} url
+ *  @param {(string|Array)} urlArg
  *  @param {string} data
  *  @param {!function(zr.Response)} callback
  */
-function httpRequest(method, url, data, callback) {
+function httpRequest(method, urlArg, data, callback) {
     method = method.toUpperCase();
-    if (typeof url == "string") {
+    if (typeof urlArg == "string") {
         /**@type{string}*/
-        var urlStr = S(url);
-    } else if (isArray(url)) {
-        urlStr = "";
-        for (var i = 0, count = url.length; i < count; i++) {
-            urlStr += "/" + S(url[i]);
-        }
+        var urlStr = S(urlArg);
+    } else if (isArray(urlArg)) {
+        urlStr = url(urlArg);
     } else {
         err(0xE6E7B3);      // httpRequest(): arg 'url' is not a string or array
         return;
