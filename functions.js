@@ -1,6 +1,6 @@
 // -----------------------------------------------------------------------------
 // (c) balarabe@protonmail.com                                      License: MIT
-// :v: 2018-05-27 19:22:19 EB12B4                                 [functions.js]
+// :v: 2018-05-27 19:24:08 8CEE1E                                 [functions.js]
 // -----------------------------------------------------------------------------
 
 // JavaScript standard: ES3
@@ -1986,7 +1986,7 @@ function getVal(ob) {
  *  @param {!function(zr.Response)} callback
  */
 function httpDelete(url, callback) {
-    httpRequest("delete", url, "", callback);
+    httpRequest("DELETE", url, "", callback);
 }                                                                   //httpDelete
 
 /** httpGet: Sends a HTTP GET request via XMLHttpRequest.
@@ -1995,7 +1995,7 @@ function httpDelete(url, callback) {
  *  @param {!function(zr.Response)} callback
  */
 function httpGet(url, callback) {
-    httpRequest("get", url, "", callback);
+    httpRequest("GET", url, "", callback);
 }                                                                      //httpGet
 
 /** httpPost: Sends a HTTP POST request via XMLHttpRequest.
@@ -2005,7 +2005,7 @@ function httpGet(url, callback) {
  *  @param {!function(zr.Response)} callback
  */
 function httpPost(url, data, callback) {
-    httpRequest("post", url, data, callback);
+    httpRequest("POST", url, data, callback);
 }                                                                     //httpPost
 
 /** httpPut: Sends a HTTP PUT request via XMLHttpRequest.
@@ -2015,7 +2015,7 @@ function httpPost(url, data, callback) {
  *  @param {!function(zr.Response)} callback
  */
 function httpPut(url, data, callback) {
-    httpRequest("put", url, data, callback);
+    httpRequest("PUT", url, data, callback);
 }                                                                      //httpPut
 
 /** httpRequest: Sends a HTTP request via XMLHttpRequest.
