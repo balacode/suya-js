@@ -1,6 +1,6 @@
 // -----------------------------------------------------------------------------
 // (c) balarabe@protonmail.com                                      License: MIT
-// :v: 2018-05-27 19:26:05 0ADB3E                                 [functions.js]
+// :v: 2018-06-17 22:10:14 669D1F                         suya-js/[functions.js]
 // -----------------------------------------------------------------------------
 
 // JavaScript standard: ES3
@@ -121,6 +121,7 @@
 //   S(values)
 //   begins(s, find)
 //   contains(s, find)
+//   containsAll(s, find)
 //   diff(a, b)
 //   ends(s, find)
 //   extractStrings(args)
@@ -2658,6 +2659,29 @@ function begins(s, find) {
 function contains(s, find) {
     return s.indexOf(find) != -1;
 }                                                                     //contains
+
+/** containsAll: Returns true if string 's' contains all the
+ *  substrings in 'find'. The substrings must be delimited by spaces.
+ *  The comparison is case-sensitive.
+ *
+ *  @param {string} s
+ *  @param {string} find
+ *
+ *  @return {!boolean}
+ */
+function containsAll(s, find) {
+    if (find.indexOf(" ") == -1) {
+        return s.indexOf(find) != -1;
+    }
+    var ar = find.split(" ");
+    for (var i = 0, end = ar.length; i < end; i++) {
+        var part = ar[i];
+        if (part != "" && s.indexOf(part) == -1) {
+            return false;
+        }
+    }
+    return true;
+}                                                                  //containsAll
 
 /** diff: Levenstein string difference function.
  *  Returns the difference metric between two strings,
