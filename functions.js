@@ -1,6 +1,6 @@
 // -----------------------------------------------------------------------------
 // (c) balarabe@protonmail.com                                      License: MIT
-// :v: 2018-06-17 22:10:14 669D1F                         suya-js/[functions.js]
+// :v: 2018-07-21 01:09:15 3C4A5C                         suya-js/[functions.js]
 // -----------------------------------------------------------------------------
 
 // JavaScript standard: ES3
@@ -289,7 +289,7 @@ function formatDate(format, args) {
                         }],
             ["d",       function() {
                             return S(dy);
-                        }],
+                        }]
     ];
     var ret = format;
     forEach (formats, formatItem);
@@ -322,10 +322,8 @@ function isDate(val) {
            isFn(val["getDate"]);
 }                                                                       //isDate
 
-/** monthNameEN: Returns an English month name,
- *  given a month number from 1 to 12,
- *  or a zero-length string if the number
- *  is less than 1 or greater than 12.
+/** monthNameEN: Returns an English month name, given a month number (1 to 12),
+ *  or a zero-length string if the number is less than 1 or greater than 12.
  *
  *  @param {number} num
  *
@@ -733,7 +731,7 @@ function makeFullscreenDiv() {
     ytop(div, 0);
     width(div, 100, "%");
     height(div, 100, "%");
-    div.style.zIndex = 200;  // must equal @dialog_z_index
+    div.style.zIndex = 200;  // must equal @dialogZIndex
     return div;
 }                                                            //makeFullscreenDiv
 
@@ -1453,8 +1451,7 @@ function every(ar, predicateFn) {
 }                                                                        //every
 
 /** filter: Similar to Array.filter().
- *  Returns null if array 'ar' is null,
- *  or a new empty array if it is empty.
+ *  Returns null if array 'ar' is null, or a new empty array if it is empty.
  *
  *  The predicate function has 3 arguments:
  *  predicateFn(item, index, ar)
@@ -1670,8 +1667,7 @@ function keyValue(key, val) {
  *  returns a new array with the results. The returned array has
  *  the same length as 'ar'. The original array is not modified.
  *
- *  Returns null if array 'ar' is null,
- *  or a new empty array if it is empty.
+ *  Returns null if array 'ar' is null, or a new empty array if it is empty.
  *
  *  @param {Array} ar
  *  @param {!function(?, number=, Array=):*} applyFn(item, index, ar)
@@ -2171,8 +2167,7 @@ function min(a, b) {
     return a < b ? a : b;
 }                                                                          //min
 
-/** nodeTypeName: Returns the name of a node type,
- *                given a node type number.
+/** nodeTypeName: Returns the name of a node type, given a node type number.
  *
  *  To get the actual name of a node, e.g. 'DIV',
  *  use the element's 'nodeName' property instead.
@@ -2355,8 +2350,7 @@ function versionIE() {
 // -----------------------------------------------------------------------------
 // # Numeric Functions
 
-/** N: Converts the given value to a number,
- *     ignoring thousands delimiters.
+/** N: Converts the given value to a number, ignoring thousands delimiters.
  *
  *  -  If 'val' is already a number, returns it unchanged.
  *     This includes NaN, Infinity and -Infinity.
@@ -2892,7 +2886,7 @@ var internalParseJSON =
             f: "\f",
             n: "\n",
             r: "\r",
-            t: "\t",
+            t: "\t"
         }
     /** raiseError: Raises an error.
      *  @param {string} msg

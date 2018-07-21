@@ -1,6 +1,6 @@
 // -----------------------------------------------------------------------------
 // (c) balarabe@protonmail.com                                      License: MIT
-// :v: 2018-02-25 15:10:49 CC34B0                    suya-js/[functions_defs.js]
+// :v: 2018-07-21 01:09:15 B456E8                    suya-js/[functions_defs.js]
 // -----------------------------------------------------------------------------
 
 /*
@@ -24,7 +24,7 @@ var sessionStorage  = {
  *      move:      function(string, number),
  *      moveStart: function(string, number),
  *      select:    function(),
- *      text:      string,
+ *      text:      string
  *  }}
  */
 zr.ITextRange;
@@ -32,7 +32,7 @@ zr.ITextRange;
 /** IWindow: __
  *  @typedef
  *  {{
- *      event: Event,
+ *      event:  Event,
  *      frames: Array<Object>
  *  }}
  */
@@ -48,7 +48,7 @@ zr.ListRows;
  *  @typedef
  *  {{
  *      name:  string,
- *      value: *,
+ *      value: *
  *  }}
  */
 zr.Property;
