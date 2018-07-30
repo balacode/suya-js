@@ -1,6 +1,6 @@
 // -----------------------------------------------------------------------------
 // (c) balarabe@protonmail.com                                      License: MIT
-// :v: 2018-07-21 01:09:15 B456E8                    suya-js/[functions_defs.js]
+// :v: 2018-07-30 13:57:07 007AA1                    suya-js/[functions_defs.js]
 // -----------------------------------------------------------------------------
 
 /*
@@ -14,7 +14,7 @@
 var zr  = {};
 
 var sessionStorage  = {
-    setItem:  function(a, b) {}
+    setItem: function(a, b) {}
 };
 
 /** ITextRange: __
