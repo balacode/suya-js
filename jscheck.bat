@@ -1,17 +1,20 @@
-@ rem :v: 2018-05-29 11:18:21 BF542A                       suya-js/[jscheck.bat]
+:: :v: 2020-06-20 10:08:46 741075                          suya-js/[jscheck.bat]
 
-@ rem  Uses the Google Closure Compiler
-@ rem  to type-check functions.js
-@ rem
-@ rem  To be able to do this, you have to download
-@ rem  and set up the path of closure-compiler.jar
-@ rem
-@ rem  Though this is a Windows batch file, the 'java'
-@ rem  command syntax on other platforms is the same
+:: Uses the Google Closure Compiler
+:: to type-check functions.js
+::
+:: To be able to do this, you have to download
+:: and set up the path of closure-compiler.jar
+::
+:: Though this is a Windows batch file, the 'java'
+:: command syntax on other platforms is the same
+
+@ set JAVA="C:\Program Files\Java\jdk1.8.0_101\jre\bin\java.exe"
+@ set CLOSURE="X:\user\bin\closure-compiler.jar"
 
 cls
 
-java -jar closure-compiler.jar ^
+%JAVA% -jar %CLOSURE% ^
         --compilation_level SIMPLE ^
         --checks-only ^
         --jscomp_warning=reportUnknownTypes -W VERBOSE ^
@@ -23,4 +26,4 @@ java -jar closure-compiler.jar ^
 
 type jscheck.txt
 
-@ rem end
+:: end
