@@ -142,7 +142,7 @@
 //   position(el, val)
 //   visibility(el, val)
 //   width(el, val, unit)
-//   ytop(el, val, unit)
+//   elTop(el, val, unit)
 //
 // # UI Effects Functions
 //   fadeScreen(show)
@@ -728,7 +728,7 @@ function makeFullscreenDiv() {
     var div = makeDiv({});
     position(div, "fixed");
     left(div, 0);
-    ytop(div, 0);
+    elTop(div, 0);
     width(div, 100, "%");
     height(div, 100, "%");
     div.style.zIndex = 200;  // must equal @dialogZIndex
@@ -1102,8 +1102,8 @@ function centerInWindow(el) {
     if (left(el) != x + "px") {
         left(el, x);
     }
-    if (ytop(el) != y + "px") {
-        ytop(el, y);
+    if (elTop(el) != y + "px") {
+        elTop(el, y);
     }
 }                                                               //centerInWindow
 
@@ -3383,10 +3383,10 @@ function position(el, val) {
     return S(el.style.position);
 }                                                                     //position
 
-/** ytop: Sets/returns the 'top'
+/** elTop: Sets/returns the 'top'
  *  style property of the specified element.
- *  (renamed to 'ytop' within this module because
- *  'top' has another definition in Closure Compiler)
+ *  (renamed to 'elTop' because 'top' has another
+ *  definition in Closure Compiler)
  *
  *  @param {(Element|HTMLElement)} el
  *  @param {(string|number)=} val
@@ -3394,9 +3394,9 @@ function position(el, val) {
  *
  *  @return {!string}
  */
-function ytop(el, val, unit) {
-    return unitProp("top", el, val, unit);
-}                                                                         //ytop
+function elTop(el, val, unit) {
+    return unitProp("top", el, val, unit);````
+}                                                                        //elTop
 
 /** visibility: Sets/returns the 'visibility'
  *  style property of the specified element.
