@@ -1,6 +1,6 @@
 // -----------------------------------------------------------------------------
+// SuyaJS JavaScript Library                              suya-js/[functions.js]
 // (c) balarabe@protonmail.com                                      License: MIT
-// :v: 2018-07-21 01:09:15 3C4A5C                         suya-js/[functions.js]
 // -----------------------------------------------------------------------------
 
 // JavaScript standard: ES3

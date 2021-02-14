@@ -1,4 +1,7 @@
-:: :v: 2020-06-20 10:08:46 741075                          suya-js/[jscheck.bat]
+:: -----------------------------------------------------------------------------
+:: SuyaJS JavaScript Library                               suya-js/[jscheck.bat]
+:: (c) balarabe@protonmail.com                                      License: MIT
+:: -----------------------------------------------------------------------------
 
 :: Uses the Google Closure Compiler
 :: to type-check functions.js

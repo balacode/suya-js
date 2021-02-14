@@ -1,6 +1,6 @@
 // -----------------------------------------------------------------------------
+// SuyaJS JavaScript Library                         suya-js/[functions_defs.js]
 // (c) balarabe@protonmail.com                                      License: MIT
-// :v: 2018-07-30 20:00:02 16F759                    suya-js/[functions_defs.js]
 // -----------------------------------------------------------------------------
 
 /*
