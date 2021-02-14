@@ -18,14 +18,14 @@
 cls
 
 %JAVA% -jar %CLOSURE% ^
-        --compilation_level SIMPLE ^
-        --checks-only ^
-        --jscomp_warning=reportUnknownTypes -W VERBOSE ^
-        ^
-        functions_defs.js ^
-        functions.js ^
-        ^
-        2>> jscheck.txt
+    --compilation_level SIMPLE ^
+    --checks-only ^
+    --jscomp_warning=reportUnknownTypes -W VERBOSE ^
+    ^
+    functions_defs.js ^
+    functions.js ^
+    ^
+    2>> jscheck.txt
 
 type jscheck.txt
 
