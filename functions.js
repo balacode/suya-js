@@ -30,7 +30,7 @@
 //   year(num)
 //
 // # DOM Element Functions
-//   append(container, children)
+//   appendTo(container, children)
 //   body()
 //   children(el, cssSelector)
 //   elID(el)
@@ -396,27 +396,27 @@ function year(num) {
 // -----------------------------------------------------------------------------
 // # DOM Element Functions
 
-/** append: Appends one or more child elements to a container element.
+/** appendTo: Appends one or more child elements to a container element.
  *
  *  @param {!HTMLElement} container
  *  @param {...(Element|Text)} children
  *
  *  @return {HTMLElement}
  */
-function append(container, children) {
+function appendTo(container, children) {
     if (!isObject(container)) {
-        err(0xE9C294, container);  // append(): arg 'container' is not an object
+        err(0xE9C294, container);  // appendTo(): 'container' arg is not object
         return null;
     }
     if (children === null || typeof children == "undefined") {
-        err(0xE84748);          // append(): arg 'children' is null or undefined
+        err(0xE84748);  // appendTo(): 'children' arg is null or undefined
         return null;
     }
     for (var i = 1, count = arguments.length; i < count; i++) {
         container.appendChild(arguments[i]);
     }
     return container;
-}                                                                       //append
+}                                                                     //appendTo
 
 /** body: Returns the body element of the document 'doc'
  *        (or main document if null).
@@ -1017,7 +1017,7 @@ function setInnerText(el, text) {
         el.childNodes[0].textContent = text;
     } else {
         var doc = /**@type{HTMLDocument}*/ (document);
-        append(el, doc.createTextNode(text));
+        appendTo(el, doc.createTextNode(text));
     }
 }                                                                 //setInnerText
 
@@ -2243,7 +2243,7 @@ function showNotification(msg, color) {
     if (div === null) {
         div = /**@type{HTMLDivElement}*/ (makeEl("div", ["zr_nt"]));
         div.id = "zr_nt";
-        append(body(), append(div, makeEl("label")));
+        appendTo(body(), appendTo(div, makeEl("label")));
     }
     div.style.backgroundColor = color;
     var label = /**@type{!HTMLLabelElement}*/ (children(div)[0]);
